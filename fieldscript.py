@@ -7,7 +7,6 @@ def coordinates_change(pare, cx, cy, scale):
 
 # ОРГАНИЗОВАТЬ ФУНКЦИЮ
 
-
 def runscript(map_file):
     pygame.init()
 
@@ -21,9 +20,11 @@ def runscript(map_file):
     CAMERAX = 0
     CAMERAY = 0
 
+
     print("Wht`s the problem?")
     while running:
         screen.fill(0, 0, 0)
+
 
         for event in pygame.event.get():
 
