@@ -4,35 +4,9 @@ import pygame
 def coordinates_change(pare, cx, cy, scale):
     pass
 
+
 # ОРГАНИЗОВАТЬ ФУНКЦИЮ
 
-
-def draw_map(surface_object, map_file, cx, cy, scale):
-    with open(map_file) as file:
-        file_text = file.read()
-
-    svg_objects = file_text.split('<')
-    for svg_object in svg_objects:
-        svg_object = svg_object[:-2]
-        if 'polygon' in svg_object:
-            polygon_angles_cord_string = svg_object.split('=')[-1][1:-2]
-        else:
-            continue
-        pares_of_polygon_angles_cord_string = polygon_angles_cord_string.split()
-        angles = []
-        for i in range(len(pares_of_polygon_angles_cord_string)):
-            angles.append(coordinates_change(tuple(map(float, pares_of_polygon_angles_cord_string[i].split(',')))), cx, cy, scale)
-        print(angles)
-
-        # ЗДЕСЬ ПЕРЕДЕЛАТЬ
-        # ДОЛЖЕН СОЗДАВАТЬСЯ ОБЪЕКТ КЛАССА ПРОВИНЦИИ С КООРДИНАТАМИ
-        # CHANGE COORDINATES ДОЛЖНА НАХОДИТЬСЯ В ФУНКЦИЯХ ОБЪЕКТА ДЛЯ ВЫЗОВА НЕПОСРЕДСТВЕННО ПЕРЕД ОТРИСОВКОЙ
-        # ПРОВИНЦИЯ ДОЛЖНА ОТРИСОВЫВАТЬСЯ У СЕБЯ В КЛАССЕ
-        # СДЕЛАТЬ КРАСИВУЮ ГРАНИЦУ + ГРАНИЦЫ МЕЖДУ СТРАНАМИ ОТРИСОВАТЬ ОТДЕЛЬНО (НАМНОГО ПОЗЖЕ)
-        # СДЕЛАТЬ ПЕРЕТАСКИВАНИЕ И УЧЕЛИЧЕНИЕ КАРТЫ
-
-
-        pygame.draw.polygon(surface_object, pygame.Color('white'), angles, 1)
 
 def runscript(map_file):
     pygame.init()
@@ -47,10 +21,9 @@ def runscript(map_file):
     CAMERAX = 0
     CAMERAY = 0
 
-    draw_map(screen, 'maps/arstocka.svg', 0, 0, 1)
-
+    print("Wht`s the problem?")
     while running:
-        # screen.fill(0, 0, 0)
+        screen.fill(0, 0, 0)
 
         for event in pygame.event.get():
 
