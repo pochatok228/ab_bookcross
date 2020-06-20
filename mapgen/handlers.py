@@ -3,7 +3,7 @@ from utils import *
 
 class Map(pygame.sprite.Sprite):
 
-	def __init__(self, filename, x, y, scale) -> None:
+	def __init__(self, filename : str, x : int, y : int, scale : int) -> None:
 
 		pygame.sprite.Sprite.__init__(self)
 		self.filename = filename;
@@ -28,16 +28,16 @@ class Map(pygame.sprite.Sprite):
 
 		self.image = pygame.transform.scale(self.image_original,  self.scale_dict[self.scale])
 
-	def set_scale(self, scale) -> None:
+	def set_scale(self, scale : int) -> None:
 
 		self.scale = scale;
 
-	def move(self, delta) -> None:
+	def move(self, delta : tuple) -> None: #tuple <int>
 
 		self.rect.x += delta[0]
 		self.rect.y += delta[1]
 
-	def collides(self, mouseclick_coords) -> bool:
+	def collides(self, mouseclick_coords : tuple) -> bool: # tuple <int>
 
 		if myrange(0, 800).contains(mouseclick_coords[0]) and myrange(0, 800).contains(mouseclick_coords[1]):
 			return True
@@ -47,12 +47,62 @@ class Map(pygame.sprite.Sprite):
 
 class MenuBlock(pygame.sprite.Sprite):
 
-	def __init__(self, x, y, w, h):
+	def __init__(self, x : int, y : int, w : int, h : int) -> None:
 		# Log.d(w, h)
 		pygame.sprite.Sprite.__init__(self);
 		self.rect = pygame.Rect((x, y, w, h));
 		self.image = pygame.Surface((w, h));
-		self.image.fill(pygame.Color(35, 35, 53))
+		self.image.fill(pygame.Color(35, 35, 35))
 		
 
 
+class Button(pygame.sprite.Sprite):
+
+
+	def __init__(self, x : int, y : int, w : int, h : int, text : str, mode : int) -> None:
+
+		pygame.sprite.Sprite.__init__(self);
+		# pass
+
+		self.mode = mode;
+
+		
+		self.rect = pygame.Rect((x, y, w, h));
+		self.image = pygame.Surface((w, h));
+		self.image.fill(pygame.Color(28, 28, 28));
+
+
+		self.active_color = (228, 228, 228);
+		self.passive_color = (100, 100, 100);
+
+		self.color = self.active_color;
+		self.text = text;
+		self.font = pygame.font.SysFont('arial', 18);
+		self.text_render = self.font.render(self.text, 1, self.color);
+
+		self.image.blit(self.text_render, (10, 25));
+
+
+	def activate(self) -> None:
+
+		self.color = self.active_color();
+		self.update();
+
+	def deactivate(self) -> None:
+
+		self.color = self.passive_color();
+		self.update();
+
+	def update(self) -> None:
+		self.text_render = self.font.render(self.text, 1, self.color);
+		self.image.blit(self.text_render, (10, 25));
+
+	def collides(self, mouseclick_coords : tuple) -> bool: # tuple of int
+		x1 = self.rect.x;
+		x2 = self.rect.x + self.rect.w;
+		y1 = self.rect.y;
+		y2 = self.rect.y + self.rect.h;
+
+		if myrange(x1, x2).contains(mouseclick_coords[0]) and myrange(y1, y2).contains(mouseclick_coords[1]):
+			return True;
+		return False;
