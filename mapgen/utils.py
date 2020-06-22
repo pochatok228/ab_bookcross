@@ -1,5 +1,11 @@
 import time
 
+
+class ModeChangeProcedure(Exception):
+
+	pass
+
+
 class Log:
 
 	def i(*msg):
