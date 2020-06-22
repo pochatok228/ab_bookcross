@@ -7,10 +7,10 @@ class Map(pygame.sprite.Sprite):
 
 		pygame.sprite.Sprite.__init__(self)
 		self.filename = filename;
-		self.scale_dict = {}
+		self.scale_dict = {};
 		self.scale = scale
 		for i in range(8):
-			self.scale_dict[i] = (800 + i * 200, 800 + i * 200) # {0 : (800, 800), 1 : (1000, 1000)} etc. generation 
+			self.scale_dict[i] = (800 + i * 200, 800 + i * 200) # {0 : (800, 800), 1 : (1000, 1000) ... 7(2200, 2200)} etc. generation 
 		self.image_original = pygame.image.load(self.filename)
 
 		Log.expects(self.scale_dict[self.scale], (800, 800))
@@ -31,6 +31,14 @@ class Map(pygame.sprite.Sprite):
 	def set_scale(self, scale : int) -> None:
 
 		self.scale = scale;
+
+	def get_scale(self) -> int:
+
+		return self.scale;
+
+	def get_coords(self) -> tuple:
+
+		return self.rect.x, self.rect.y;
 
 	def move(self, delta : tuple) -> None: #tuple <int>
 
@@ -64,7 +72,7 @@ class Button(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self);
 		# pass
 
-		self.mode = mode;
+		self.mode : int = mode;
 
 		
 		self.rect = pygame.Rect((x, y, w, h));
@@ -74,6 +82,7 @@ class Button(pygame.sprite.Sprite):
 
 		self.active_color = (228, 228, 228);
 		self.passive_color = (100, 100, 100);
+		self.pressed_color = (0, 200, 10)
 
 		self.color = self.active_color;
 		self.text = text;
@@ -84,13 +93,15 @@ class Button(pygame.sprite.Sprite):
 
 
 	def activate(self) -> None:
-
-		self.color = self.active_color();
+		self.color = self.active_color;
 		self.update();
 
 	def deactivate(self) -> None:
+		self.color = self.passive_color;
+		self.update();
 
-		self.color = self.passive_color();
+	def press(self) -> None:
+		self.color = self.pressed_color;
 		self.update();
 
 	def update(self) -> None:
