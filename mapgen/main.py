@@ -6,7 +6,9 @@ from handlers import MenuBlock # right and bottom menu blocks
 from handlers import Button
 import sys
 
+
 current_version = "0.0.1.2";
+
 resolution = (1000, 900);
 
 mapsurface = None
@@ -110,7 +112,6 @@ def main() -> None:
 			# event handling
 			try:
 				for event in pygame.event.get():
-
 					if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 						expectabe_mode = check_buttons(button_group = button_group, 
 													mouseclick_coords = event.pos,
@@ -122,8 +123,17 @@ def main() -> None:
 							raise ModeChangeProcedure();
 
 
+					if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+						expectabe_mode = check_buttons(button_group = button_group, 
+													mouseclick_coords = event.pos,
+													mode = mode);
+						if expectabe_mode != mode:
+							# здесь будет запущена процедура изменения режима работы
+							Log.expects(expectabe_mode, mode);
+							mode = expectabe_mode;
+							raise ModeChangeProcedure();
+
 				if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3 and mapsurface.collides(event.pos):
-					# map moving with holded right button
 
 					pressed = True
 					last_coords = pygame.mouse.get_pos();
@@ -162,9 +172,6 @@ def main() -> None:
 			pass;
 
 		pygame.display.flip()
-
-
-
 
 
 
