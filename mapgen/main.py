@@ -2,6 +2,7 @@ import pygame
 from utils import Log, myrange # logging and range classes
 from handlers import Map
 from handlers import MenuBlock # right and bottom menu blocks
+from handlers import Button 
 import sys
 
 current_version = "0.0.1";
@@ -34,6 +35,13 @@ def main() -> None:
 	menu_blocks_group.add(right_menu_block);
 	menu_blocks_group.add(bottom_menu_block);
 
+	# buttons in right menu inizializing
+
+	RightButtons = pygame.sprite.Group();
+	add_province_button = Button(825, 25, 150, 50, "Добавить провинцию");
+
+
+	RightButtons.add(add_province_button);
 
 
 	Log.expects(menu_blocks_group.has(right_menu_block), True)
@@ -47,7 +55,7 @@ def main() -> None:
 	"""
 		Mode 0: 	is the mode with map showing and nothinhg else
 
-		Mode 1: 	mode when user adds province drawing polygons
+		Mode 1: 	mode when user adds province drawing polygon
 
 		Mode 2: 	mode when user color provinces into countries
 
@@ -58,8 +66,9 @@ def main() -> None:
 
 	# main screen cycle
 	while True:
+		screen.fill((228, 228, 228)); menu_blocks_group.draw(screen); RightButtons.draw(screen);
 
-		screen.fill((228, 228, 228))
+
 		if mode == 0:
 
 			# frame render
@@ -73,9 +82,9 @@ def main() -> None:
 				Map.move(mapsurface, delta)
 				last_coords = up_coords
 
-			mapgroup.draw(screen)
-			menu_blocks_group.draw(screen)
+			mapgroup.draw(screen); 
 			# event handling
+
 
 
 			for event in pygame.event.get():
@@ -107,11 +116,6 @@ def main() -> None:
 					sys.exit()
 
 		pygame.display.flip()
-
-
-
-
-
 
 
 

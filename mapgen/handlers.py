@@ -44,7 +44,6 @@ class Map(pygame.sprite.Sprite):
 		return False
 
 
-
 class MenuBlock(pygame.sprite.Sprite):
 
 	def __init__(self, x, y, w, h):
@@ -53,6 +52,16 @@ class MenuBlock(pygame.sprite.Sprite):
 		self.rect = pygame.Rect((x, y, w, h));
 		self.image = pygame.Surface((w, h));
 		self.image.fill(pygame.Color(35, 35, 53))
+
+
+class Button(pygame.sprite.Sprite):
+
+	def __init__(self, x, y, w, h, text):
+
+		pygame.sprite.Sprite.__init__(self);
+		self.rect = pygame.Rect((x, y, w, h));
+		self.image = pygame.Surface((w, h));
+		self.image.fill(pygame.Color(28, 28, 28));
 		
 
 
