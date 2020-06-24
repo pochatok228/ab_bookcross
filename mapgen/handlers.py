@@ -117,3 +117,6 @@ class Button(pygame.sprite.Sprite):
 		if myrange(x1, x2).contains(mouseclick_coords[0]) and myrange(y1, y2).contains(mouseclick_coords[1]):
 			return True;
 		return False;
+
+	def is_able_to_press(self) -> bool:
+		if self.color == self.active_color or self.color == self.pressed_color: return True; return False;

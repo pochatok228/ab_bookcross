@@ -17,7 +17,7 @@ from metascripts import Province, State, World;
 
 
 
-current_version : str = "0.0.1.6";
+current_version : str = "0.0.1.7";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
@@ -48,8 +48,12 @@ def check_buttons(events : list,
 			for button in button_group:
 				if button.collides(event.pos):
 					expectable_button = button
-			if expectable_button is not None:
+			if expectable_button is not None and expectable_button.is_able_to_press():
 				pressed_button = expectable_button
+				if pressed_button.text == 'Delete Province':
+					# Log.d("delete_province button was pressed")
+					world.delete_province();
+					return 0;
 				if pressed_button.mode != mode:
 					mode = pressed_button.mode;
 					deactivate_buttons(button_group);
@@ -95,6 +99,8 @@ def MapMovementAndZoom(events : list,
 				mapsurface.set_scale(mapsurface.scale - 1)
 				mapgroup.update()
 
+
+
 		if event.type == pygame.QUIT:
 			pygame.quit();
 			sys.exit();
@@ -104,8 +110,13 @@ def MapMovementAndZoom(events : list,
 def provinceGeometryEdit(events : list, province : Province,  mapsurface : pygame.Surface) -> None:
 	for event in events:
 		if event.type == pygame.MOUSEBUTTONDOWN:
-			if event.button == 1 and mapsurface.collides(event.pos):
+			if event.button == 1 and mapsurface.collides(event.pos): #editing borders
 				province.addPolygon(toScreenCoords(event.pos), mapsurface);
+			elif event.button == 2 and mapsurface.collides(event.pos): #editing capitals
+				# Log.d("Got it");
+				capital_coords = event.pos;
+				map_capital_coords = toScreenCoords(capital_coords).toMapCoords(mapsurface.get_scale(), mapsurface.get_coords());
+				world.add_capital(map_capital_coords, province);
 
 
 def main(world : World) -> int:
@@ -139,8 +150,11 @@ def main(world : World) -> int:
 	right_button_group = pygame.sprite.Group();
 	add_province_button = Button(x = 825, y = 25, w = 150, h = 75, 
 									text = "Add province", mode = 1);
+	delete_province_button = Button(x = 825, y = 125, w = 150, h = 75,
+		text = "Delete Province", mode = 0);
 
 	right_button_group.add(add_province_button);
+	right_button_group.add(delete_province_button);
 
 
 
