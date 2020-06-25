@@ -1,5 +1,6 @@
 import time
-
+import tkinter
+from tkinter import filedialog
 
 class ModeChangeProcedure(Exception):
 
@@ -50,6 +51,16 @@ class myrange:
 
 	def get_scale_dict(self) -> dict:
 		return self.scale_dict
+
+	def get_distance(self, coords1 : object, coords2 : object) -> float:
+		try: x1 = coords1.x; y1 = coords1.y;
+		except Exception: x1 = coords1[0]; y1 = coords1[1];
+		try: x2 = coords2.x; y2 = coords2.y;
+		except Exception: x2 = coords2[0], y2 = coords2[1];
+		a = (x1 - x2) ** 2;
+		b = (y1 - y2) ** 2;
+		c = (a + b) ** 0.5;
+		return c;
 
 
 class Coords():
@@ -132,3 +143,50 @@ def toScreenCoords(coords : object) -> ScreenCoords:
 		return coords.toScreenCoords;
 	except Exception:
 		return ScreenCoords(coords[0], coords[1]);
+
+
+
+class Dialog:
+
+	def __init__(self) -> None:
+		self.value = "";
+
+	def get(self, message : str = "") -> object:
+		self.get_value(message = message);
+		return self.value;
+
+	def answer_and_quit(self) -> None:
+		self.value = self.value_enterfield.get();
+		self.dialog_window.destroy();
+		return self.value;  # удаление диалогового объекта для возможности создания нового окна
+					# ТКинтер с тем же идентификатором
+
+
+	def get_value(self, message : str  = "") -> object:
+		self.dialog_window = tkinter.Tk();
+		self.dialog_window.title(message);
+		self.dialog_window.geometry('300x75+200+100');
+		# self.dialog_window.geomerty("300x250");
+		self.value_enterfield = tkinter.Entry();
+		
+		self.text_label = tkinter.Label(self.dialog_window,
+								text = message, 
+								);
+		self.get_value_button = tkinter.Button(self.dialog_window, text = "OK",
+			font = 16, command = self.answer_and_quit);
+
+		self.text_label.pack();
+		self.value_enterfield.pack();
+		self.get_value_button.pack();
+
+		self.dialog_window.mainloop();
+
+	def get_file(self) -> str: #file name
+		self.root = tkinter.Tk(); self.root.withdraw();
+		self.filename = filedialog.askopenfilename();
+		self.root.destroy();
+		return self.filename
+
+	
+
+

@@ -2,7 +2,7 @@ import pygame
 from utils import *
 import random
 
-
+POLITICAL_MODE = 0
 
 """
 	провинция, как минимальная географическая единица имеет 3 типа координат:
@@ -25,8 +25,10 @@ class Province():
 		self.color = pygame.Color(random.randint(0, 255), 
 			random.randint(0, 255), random.randint(0, 255));
 		self.name : str = "";
+		self.id : int = -1;
 		self.capital_coords = None;
 		self.connections = [] # list of ids of provinces with common borders
+		self.state = None;
 
 
 	def addPolygon(self, coords : ScreenCoords, mapsurface : pygame.Surface) -> None:
@@ -61,25 +63,50 @@ class Province():
 				self.color,
 				(screen_coords.x, screen_coords.y), 10, 0);
 
+	def fill_draw(self, screen, mapsurface, mode : int = 0):
+		dots : list = [coords.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords()).get_coords() for coords in self.polygons];
+		if len(dots) >=3: pygame.draw.polygon(screen,
+			(self.state.color.r, self.state.color.g, self.state.color.b, self.state.color.a), dots, 0);
+		else: pass;
 
-		
-
-	def set_name(self, name : str) -> None:
-		self.name = name;
-
-	def set_capital_coords(self, coords : MapCoords) -> None:
-		self.capital_coords = coords;
-
-	def get_id(self, world : object) -> int:
-		return world.list_of_province.index(self);
+	def set_name(self, name : str) -> None: self.name = name;
+	def set_capital_coords(self, coords : MapCoords) -> None: self.capital_coords = coords;
+	def get_id(self) -> int: return self.id;
+	def get_name(self) -> str: return self.name;
+	def get_state(self) -> object: return self.state;
+	def set_id(self, id : int) -> None: self.id = id;
+	def set_name(self, name : str) -> None: self.name = name;
+	def set_state(self, state : object) -> None: self.state = state;
 
 
 
 
 class State():
 
-	pass
+	def __init__(self) -> None:
 
+		self.id : int = -1;
+		self.name : str = "";
+		self.list_of_province = [];
+		self.color = pygame.Color(random.randint(0, 255), random.randint (0, 255), random.randint(0, 255), a = 100);
+		self.color.a = 100;
+		# Log.d(self.color.a);
+
+
+	def draw(self, screen : pygame.Surface, mapsurface: pygame.Surface) -> None:
+		for province in self.list_of_province:
+			province.fill_draw(screen, mapsurface, mode = POLITICAL_MODE);
+
+	def addProvince(self, province : Province) -> None:
+		self.list_of_province.append(province);
+		province.set_state(self);
+		Log.d(province.get_name());
+
+	def set_id(self, id : int) -> None: self.id = id;
+	def set_name(self, name : str) -> None: self.name = name;
+	def get_id(self) -> int: return self.id;
+	def get_name(self) -> str: return self.name;
+		
 
 
 class World():
@@ -90,17 +117,25 @@ class World():
 		self.list_of_states = []; # <State>
 		self.province_state_dict = {};
 		self.list_of_capitals = [];
+		# в случае с world за счет того, что у класса лишь один эземпляр
+		# функции типа get_parameter() не буду прописывать.
 
 
-	def addProvince(self, province : Province) -> None:
-		self.list_of_province.append(province);
+	def addProvince(self, province : Province) -> None: self.list_of_province.append(province);
 		# Log.d(self.list_of_province);
 
+	def addState(self, state : State) -> None:
+		self.list_of_states.append(state);
 
-	def draw_all(self, screen : pygame.Surface, mapsurface : pygame.Surface) -> None:
+
+	def draw_all(self, screen : pygame.Surface, mapsurface : pygame.Surface, mode = POLITICAL_MODE) -> None:
 		# Log.d("dra")
-		for province in self.list_of_province:
+		
 
+		for state in self.list_of_states:
+			state.draw(screen, mapsurface);
+
+		for province in self.list_of_province:
 			province.draw(screen, mapsurface);
 
 	def add_capital(self, coords : MapCoords, province : Province) -> None:
@@ -109,4 +144,17 @@ class World():
 		province.set_capital_coords(coords);
 
 	def delete_province(self) -> None:
-		return self.list_of_province.pop();
+		try: return self.list_of_province.pop();
+		except IndexError: return None;
+
+	def get_new_province_id(self) -> int:
+		return len(self.list_of_province);
+
+	def get_new_state_id(self) -> int:
+		return len(self.list_of_states);
+
+	def get_province(self, id : int) -> Province:
+		return self.list_of_province[id];
+
+	def get_state(self, id : int) -> State:
+		return self.list_of_states[id];
