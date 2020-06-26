@@ -19,7 +19,7 @@ from metascripts import POLITICAL_MODE;
 
 
 optimized_myrange = myrange(None, None);
-current_version : str = "0.0.1.8";
+current_version : str = "0.0.2";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
@@ -73,6 +73,7 @@ def check_capitals(world: World, event_click : tuple, mapsurface : pygame.Surfac
 		if optimized_myrange.get_distance(world.list_of_capitals[capital_id], event_click_map_coords) <= 20:
 			return capital_id;
 
+
 def MapMovementAndZoom(events : list, 
 	pressed : bool,
 	last_coords : tuple) -> None:
@@ -96,14 +97,14 @@ def MapMovementAndZoom(events : list,
 			# ZOOM +
 			# Log.d("I`ve catch this event!")
 			# Log.d("mapsurface.scale = {}".format(mapsurface.scale))
-			if myrange(0, 6).contains(mapsurface.scale):
+			if myrange(0, 10).contains(mapsurface.scale):
 				mapsurface.set_scale(mapsurface.scale + 1)
 				mapgroup.update()
 
 		if event.type == pygame.MOUSEBUTTONDOWN and event.button == 5 and mapsurface.collides(event.pos):
 
 			# ZOOM -
-			if myrange(1, 7).contains(mapsurface.scale):
+			if myrange(1, 11).contains(mapsurface.scale):
 				mapsurface.set_scale(mapsurface.scale - 1)
 				mapgroup.update()
 
@@ -125,8 +126,10 @@ def provinceGeometryEdit(events : list, province : Province,  mapsurface : pygam
 				capital_coords = event.pos;
 				map_capital_coords = toScreenCoords(capital_coords).toMapCoords(mapsurface.get_scale(), 
 													mapsurface.get_coords());
-				world.add_capital(map_capital_coords, province);
-			
+				if len(world.list_of_capitals) != len(world.list_of_province): world.add_capital(map_capital_coords, province);
+				else: province.set_capital_coords(map_capital_coords); world.list_of_capitals[-1] = map_capital_coords;
+
+						
 def addStateMode(events : list,
 	state : State, mapsurface : pygame.Surface) -> None:
 	for event in events:
@@ -134,8 +137,48 @@ def addStateMode(events : list,
 			if event.button == 1 and mapsurface.collides(event.pos):
 				variable_click = event.pos;
 				variable_capital_id = check_capitals(world, variable_click, mapsurface);
-				if variable_capital_id is not None and world.get_province(variable_capital_id).get_state() != state:
+				# Log.d("got ok")
+				# try: Log.d(world.get_province(variable_capital_id).get_state().name);
+				# except Exception : Log.d('no name');
+				if variable_capital_id is not None and world.get_province(variable_capital_id).get_state() is not state:
 					state.addProvince(world.get_province(variable_capital_id));
+		if event.type == pygame.KEYDOWN:
+			if event.key in map(ord, list('ZzЯя')):
+				# Log.i("Caught");
+				try: province = state.list_of_province.pop(); province.state = province.previous_state;
+				except Exception: pass;
+
+
+def graphEditMode(events : list, screen, mapsurface : pygame.Surface, world : World, capital_pressed : int) -> int:
+	# Log.e(type(capital_pressed));
+	if capital_pressed == -1:
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					variable_capital_id = check_capitals(world, event.pos, mapsurface);
+					if variable_capital_id is not None:
+						capital_pressed = variable_capital_id;
+						return capital_pressed;
+		return -1;
+	else:
+		# для начала рисуем линию между стартом и мышкой
+		mouse_screen_coords = pygame.mouse.get_pos();
+		capital_screen_coords = world.list_of_capitals[capital_pressed].toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords());
+		# Log.d(capital_screen_coords);
+		pygame.draw.line(screen, pygame.Color("white"), capital_screen_coords.get_coords(), mouse_screen_coords, 5);
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					variable_capital_id = check_capitals(world, event.pos, mapsurface);
+					if variable_capital_id is not None:
+						world.add_connection(capital_pressed,variable_capital_id);
+						return -1;
+
+
+
+		return capital_pressed;
+
+
 
 
 
@@ -171,22 +214,26 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
 	right_button_group = pygame.sprite.Group();
 	add_province_button = Button(x = 825, y = 25, w = 150, h = 75, 
-									text = "Add province", mode = 1);
+									text = "Add Province", mode = 1);
 	delete_province_button = Button(x = 825, y = 125, w = 150, h = 75,
 		text = "Delete Province", mode = 0);
 	add_state_button = Button(
 		x = 825, y = 225,
 		w = 150, h = 75, text = "Add State", mode = 2);
+	edit_graph_button = Button(
+		x = 825, y = 325,
+		w = 150, h = 75, text = "Edit Graph", mode = 3);
 
 	right_button_group.add(add_province_button);
 	right_button_group.add(delete_province_button);
 	right_button_group.add(add_state_button);
+	right_button_group.add(edit_graph_button);
 
 
 
 
 	scale = 0 # масштаб карты. транслятор масштаб : размер карты в mapsurface.scale_dict
-	pressed = False
+	pressed = False; capital_pressed = -1;
 	mode = 0;
 	last_coords = None;
 	current_added_province = None;
@@ -201,14 +248,15 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
 	# main screen cycle
 	while True:
-
+		frameEventsList = pygame.event.get();
 		screen.fill((228, 228, 228))
-		Log.expects(myrange(0, 2).contains(mode), True);
+		# Log.expects(myrange(0, 2).contains(mode), True);
 
-		if myrange(0, 2).contains(mode):
-
+		if myrange(0, 3).contains(mode):
+			pressed, last_coords = MapMovementAndZoom(frameEventsList, pressed, last_coords);
 			mapgroup.draw(screen);
 			world.draw_all(screen, mapsurface);
+			world.draw_graph(screen, mapsurface);
 		
 		
 
@@ -217,10 +265,10 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 		В отдельный этап вынесены эвенты со сменой режима работы"
 		"""
 
-		frameEventsList = pygame.event.get();
+		
 
-		if mode == 0:
-			pressed, last_coords = MapMovementAndZoom(frameEventsList, pressed, last_coords);
+		if mode == 0: # mode enter
+			
 			try:
 				new_mode : int = check_buttons(frameEventsList, right_button_group, mode);
 				if mode != new_mode : mode = new_mode; raise ModeChangeProcedure;
@@ -237,30 +285,40 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 					current_added_state.set_id(world.get_new_state_id());
 					current_added_state.set_name(state_name);
 					world.addState(current_added_state);
+				elif mode == 3:
+					pass
+				continue
 
-		elif mode == 1:
-			pressed, last_coords = MapMovementAndZoom(frameEventsList, pressed, last_coords);
+
+
+		if myrange(1, 3).contains(mode): # mode exit
 			try:
 				new_mode : int = check_buttons(frameEventsList, right_button_group, mode);
-				if mode != new_mode : mode = new_mode; raise ModeChangeProcedure;
+				if mode != new_mode : old_mode = mode; mode = new_mode; raise ModeChangeProcedure;
 			except ModeChangeProcedure:
 				if mode == 0:
-					current_added_province = None;
-					if len(world.list_of_capitals) != len(world.list_of_province): world.list_of_province.pop();
+					if old_mode == 1:
+						current_added_province = None;
+						if len(world.list_of_capitals) != len(world.list_of_province): world.list_of_province.pop(); Log.d(len(world.list_of_capitals), len(world.list_of_province))
+						
+					elif old_mode == 2:
+						current_added_state = None;
+					elif old_mode == 3:
+						pass;
+
+
+
+		if mode == 1:
 			provinceGeometryEdit(frameEventsList,
 								current_added_province, 
 								mapsurface);
-
 		elif mode == 2:
-			pressed, last_coords = MapMovementAndZoom(frameEventsList, pressed, last_coords);
-			try:
-				new_mode : int = check_buttons(frameEventsList, right_button_group, mode);
-				if mode != new_mode : mode = new_mode; raise ModeChangeProcedure;
-			except ModeChangeProcedure:
-				if mode == 0:
-					current_added_state = None;
-
 			addStateMode(frameEventsList, current_added_state, mapsurface);
+
+		elif mode == 3:
+			capital_pressed = graphEditMode(frameEventsList, screen, mapsurface, world, capital_pressed);
+
+
 
 
 

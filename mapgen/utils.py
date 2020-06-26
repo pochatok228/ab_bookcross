@@ -158,8 +158,7 @@ class Dialog:
 	def answer_and_quit(self) -> None:
 		self.value = self.value_enterfield.get();
 		self.dialog_window.destroy();
-		return self.value;  # удаление диалогового объекта для возможности создания нового окна
-					# ТКинтер с тем же идентификатором
+		return self.value;  
 
 
 	def get_value(self, message : str  = "") -> object:

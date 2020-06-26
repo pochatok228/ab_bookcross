@@ -4,6 +4,7 @@ import random
 
 POLITICAL_MODE = 0
 
+
 """
 	провинция, как минимальная географическая единица имеет 3 типа координат:
 
@@ -29,6 +30,8 @@ class Province():
 		self.capital_coords = None;
 		self.connections = [] # list of ids of provinces with common borders
 		self.state = None;
+		self.previous_state = None;
+
 
 
 	def addPolygon(self, coords : ScreenCoords, mapsurface : pygame.Surface) -> None:
@@ -69,14 +72,28 @@ class Province():
 			(self.state.color.r, self.state.color.g, self.state.color.b, self.state.color.a), dots, 0);
 		else: pass;
 
-	def set_name(self, name : str) -> None: self.name = name;
-	def set_capital_coords(self, coords : MapCoords) -> None: self.capital_coords = coords;
+	def draw_connections(self, screen, mapsurface, world) -> None:
+		for province_connected in self.connections:
+			map_coords_of_final_dot = province_connected.capital_coords;
+			screen_coords_of_self_capital = self.capital_coords.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords());
+			screen_coords_of_other_capital = map_coords_of_final_dot.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords());
+			pygame.draw.line(screen, pygame.Color("white"), screen_coords_of_self_capital.get_coords(), screen_coords_of_other_capital.get_coords(), 5);
+
+
+	
+	
 	def get_id(self) -> int: return self.id;
 	def get_name(self) -> str: return self.name;
 	def get_state(self) -> object: return self.state;
+	def get_capital_coords(self) -> MapCoords : return self.capital_coords;
 	def set_id(self, id : int) -> None: self.id = id;
 	def set_name(self, name : str) -> None: self.name = name;
-	def set_state(self, state : object) -> None: self.state = state;
+	def set_state(self, state : object) -> None: self.previous_state = self.state; self.state = state;
+	def set_capital_coords(self, coords : MapCoords) -> None: self.capital_coords = coords;
+	
+
+	def add_connection(self, other) -> None: self.connections.append(other); # other type is also Province
+	def del_connection(self) -> None: self.connections.pop();
 
 
 
@@ -138,23 +155,29 @@ class World():
 		for province in self.list_of_province:
 			province.draw(screen, mapsurface);
 
+	def draw_graph(self, screen, mapsurface):
+		for province in self.list_of_province:
+			province.draw_connections(screen, mapsurface, self);
+
 	def add_capital(self, coords : MapCoords, province : Province) -> None:
 		self.list_of_capitals.append(coords);
 		# Log.d("Me to")
 		province.set_capital_coords(coords);
 
 	def delete_province(self) -> None:
-		try: return self.list_of_province.pop();
+		try:
+			self.list_of_capitals.pop(); 
+			return self.list_of_province.pop();
 		except IndexError: return None;
 
-	def get_new_province_id(self) -> int:
-		return len(self.list_of_province);
+	def add_connection(self, capitalId1 : int, capitalId2 : int) -> None:
 
-	def get_new_state_id(self) -> int:
-		return len(self.list_of_states);
+		province1 = self.list_of_province[capitalId1];
+		province2 = self.list_of_province[capitalId2];
+		province1.add_connection(province2); province2.add_connection(province1);
 
-	def get_province(self, id : int) -> Province:
-		return self.list_of_province[id];
+	def get_new_province_id(self) -> int: return len(self.list_of_province);
+	def get_new_state_id(self) -> int: return len(self.list_of_states);
+	def get_province(self, id : int) -> Province: return self.list_of_province[id];
+	def get_state(self, id : int) -> State: return self.list_of_states[id];
 
-	def get_state(self, id : int) -> State:
-		return self.list_of_states[id];

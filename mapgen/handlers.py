@@ -9,7 +9,7 @@ class Map(pygame.sprite.Sprite):
 		self.filename = filename;
 		self.scale_dict = {};
 		self.scale = scale
-		for i in range(8):
+		for i in range(12):
 			self.scale_dict[i] = (800 + i * 200, 800 + i * 200) # {0 : (800, 800), 1 : (1000, 1000) ... 7(2200, 2200)} etc. generation 
 		self.image_original = pygame.image.load(self.filename)
 
@@ -24,32 +24,19 @@ class Map(pygame.sprite.Sprite):
 		
 		# Log.d(self.rect.x, self.rect.y)
 
-	def update(self) -> None:
-
-		self.image = pygame.transform.scale(self.image_original,  self.scale_dict[self.scale])
-
-	def set_scale(self, scale : int) -> None:
-
-		self.scale = scale;
-
-	def get_scale(self) -> int:
-
-		return self.scale;
-
-	def get_coords(self) -> tuple:
-
-		return self.rect.x, self.rect.y;
-
 	def move(self, delta : tuple) -> None: #tuple <int>
-
 		self.rect.x += delta[0]
 		self.rect.y += delta[1]
 
 	def collides(self, mouseclick_coords : tuple) -> bool: # tuple <int>
-
 		if myrange(0, 800).contains(mouseclick_coords[0]) and myrange(0, 800).contains(mouseclick_coords[1]):
 			return True
 		return False
+
+	def update(self) -> None: self.image = pygame.transform.scale(self.image_original,  self.scale_dict[self.scale]);
+	def set_scale(self, scale : int) -> None: self.scale = scale;
+	def get_scale(self) -> int: return self.scale;
+	def get_coords(self) -> tuple: return self.rect.x, self.rect.y;
 
 
 
@@ -86,7 +73,7 @@ class Button(pygame.sprite.Sprite):
 
 		self.color = self.active_color;
 		self.text = text;
-		self.font = pygame.font.SysFont('arial', 18);
+		self.font = pygame.font.SysFont('Century Gothic', 14);
 		self.text_render = self.font.render(self.text, 1, self.color);
 
 		self.image.blit(self.text_render, (10, 25));
