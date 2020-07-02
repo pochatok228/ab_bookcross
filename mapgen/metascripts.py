@@ -32,6 +32,12 @@ class Province():
 		self.state = None;
 		self.previous_state = None;
 
+		self.text_color = (255, 255, 0);
+		self.font = pygame.font.SysFont('Century Gothic', 14);
+		self.text_render = self.font.render(self.name, 1, self.color);
+		self.rect_chars = self.text_render.get_rect();
+		
+
 
 
 	def addPolygon(self, coords : ScreenCoords, mapsurface : pygame.Surface) -> None:
@@ -80,6 +86,10 @@ class Province():
 			pygame.draw.line(screen, pygame.Color("white"), screen_coords_of_self_capital.get_coords(), screen_coords_of_other_capital.get_coords(), 5);
 
 
+		
+
+
+
 	
 	
 	def get_id(self) -> int: return self.id;
@@ -100,6 +110,7 @@ class Province():
 
 class State():
 
+
 	def __init__(self) -> None:
 
 		self.id : int = -1;
@@ -115,9 +126,12 @@ class State():
 			province.fill_draw(screen, mapsurface, mode = POLITICAL_MODE);
 
 	def addProvince(self, province : Province) -> None:
+		if self.list_of_province == []:
+			self.capital_province = province;
 		self.list_of_province.append(province);
 		province.set_state(self);
-		Log.d(province.get_name());
+		# Log.d(province.get_name());
+
 
 	def set_id(self, id : int) -> None: self.id = id;
 	def set_name(self, name : str) -> None: self.name = name;

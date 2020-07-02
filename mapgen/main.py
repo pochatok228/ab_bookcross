@@ -19,7 +19,7 @@ from metascripts import POLITICAL_MODE;
 
 
 optimized_myrange = myrange(None, None);
-current_version : str = "0.0.2";
+current_version : str = "0.0.2.1";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
@@ -208,9 +208,9 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
 
 
-	Log.expects(menu_blocks_group.has(right_menu_block), True)
-	Log.expects(menu_blocks_group.has(bottom_menu_block), True)
-	Log.expects(mapgroup.has(mapsurface), True)
+	# Log.expects(menu_blocks_group.has(right_menu_block), True)
+	# Log.expects(menu_blocks_group.has(bottom_menu_block), True)
+	# Log.expects(mapgroup.has(mapsurface), True)
 
 	right_button_group = pygame.sprite.Group();
 	add_province_button = Button(x = 825, y = 25, w = 150, h = 75, 
@@ -237,6 +237,7 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	mode = 0;
 	last_coords = None;
 	current_added_province = None;
+	text_showing : bool = True; icon_showing : bool = True;
 
 	"""
 		Mode 0: 	is the mode with political map showing and nothinhg else
@@ -249,6 +250,22 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	# main screen cycle
 	while True:
 		frameEventsList = pygame.event.get();
+
+		# обработка вспомогательных модов работы
+
+		for event in frameEventsList:
+			if event.type == pygame.KEYDOWN:
+				try:
+					if event.key in map(ord, list('тТnN')):
+						text_showing = not text_showing;
+						# Log.d('got it');
+						continue
+					elif event.key in map(ord, list('iIшШ')):
+						icon_showing = not icon_showing;
+
+				except Exception:
+					pass
+
 		screen.fill((228, 228, 228))
 		# Log.expects(myrange(0, 2).contains(mode), True);
 
@@ -278,6 +295,7 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 					current_added_province = Province();
 					current_added_province.set_id(world.get_new_province_id());
 					current_added_province.set_name(province_name);
+					Log.d(current_added_province.get_name());
 					world.addProvince(current_added_province);
 				elif mode == 2:
 					state_name = Dialog().get(message = "Введите название страны");
@@ -320,11 +338,9 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
 
 
-
-
-
 		menu_blocks_group.draw(screen); # блоки меню отрисовываются при любом режиме работы программы
 		right_button_group.draw(screen); # кнопки отрисовываются при любом режиме работы программы.	
+		# if icon_showing: world.icon_draw(screen, mapsurface);
 		pygame.display.flip()
 
 	return 0;

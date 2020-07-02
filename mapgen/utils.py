@@ -38,7 +38,7 @@ class myrange:
 		self.value_maximum = value_maximum
 		self.value_minimum = value_minimum
 		self.scale_dict = {}
-		for i in range(8):
+		for i in range(12):
 			self.scale_dict[i] = (800 + i * 200, 800 + i * 200) # {0 : (800, 800), 1 : (1000, 1000) ... 7(2200, 2200)} etc. generation 
 
 
