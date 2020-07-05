@@ -3,6 +3,7 @@ from utils import *
 import random
 
 POLITICAL_MODE = 0
+POPULATION_MODE = 1
 
 
 """
@@ -19,6 +20,12 @@ POLITICAL_MODE = 0
 	имеют ранжирование 10х10
 
 """
+
+color_dict = {
+	POLITICAL_MODE : pygame.Color(255, 255, 255),
+	POPULATION_MODE : pygame.Color(0, 152, 0),
+
+};
 class Province():
 
 	def __init__(self) -> None:
@@ -36,6 +43,9 @@ class Province():
 		self.font = pygame.font.SysFont('Century Gothic', 14);
 		self.text_render = self.font.render(self.name, 1, self.color);
 		self.rect_chars = self.text_render.get_rect();
+
+		self.population = 0;
+		self.productions = 0;
 		
 
 
@@ -72,11 +82,27 @@ class Province():
 				self.color,
 				(screen_coords.x, screen_coords.y), 10, 0);
 
-	def fill_draw(self, screen, mapsurface, mode : int = 0):
+	def fill_draw(self, screen, mapsurface, world,  mode : int = 0) -> None:
 		dots : list = [coords.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords()).get_coords() for coords in self.polygons];
-		if len(dots) >=3: pygame.draw.polygon(screen,
-			(self.state.color.r, self.state.color.g, self.state.color.b, self.state.color.a), dots, 0);
+		Log.d(mode);
+		if mode == POLITICAL_MODE and self.state is not None:
+			if len(dots) >=3: 
+				pygame.draw.polygon(screen,
+				(self.state.color.r, self.state.color.g, self.state.color.b, self.state.color.a), dots, 0);
+				return None;
+		elif mode in [POPULATION_MODE]:
+			Log.d("went here");
+			max_paramter = max([province.get_parameter(mode) for province in world.list_of_province]);
+			self.color_parameter = pygame.Color(255, 255, 255) - color_dict[mode];
+			percent = self.get_parameter(mode) / max_paramter;
+			self.color_parameter *= percent;
+			if len(dots) >= 3: pygame.draw.polygon(screen,
+				self.color_parameter, dots, 0);
 		else: pass;
+		pass;
+
+
+
 
 	def draw_connections(self, screen, mapsurface, world) -> None:
 		for province_connected in self.connections:
@@ -88,6 +114,13 @@ class Province():
 
 		
 
+	def get_parameter(self, mode) -> object: # in most of cases INT
+		if mode == POLITICAL_MODE: return 0;
+		elif mode == POPULATION_MODE: return self.population;
+
+	def set_parameter(self, mode, value) -> None:
+		if mode == POLITICAL_MODE: return None;
+		elif mode == POPULATION_MODE: self.population = value; return None;
 
 
 	
@@ -121,9 +154,9 @@ class State():
 		# Log.d(self.color.a);
 
 
-	def draw(self, screen : pygame.Surface, mapsurface: pygame.Surface) -> None:
+	def draw(self, screen : pygame.Surface, mapsurface: pygame.Surface, world, mode : int = 0) -> None:
 		for province in self.list_of_province:
-			province.fill_draw(screen, mapsurface, mode = POLITICAL_MODE);
+			province.fill_draw(screen, mapsurface, world,  mode = mode);
 
 	def addProvince(self, province : Province) -> None:
 		if self.list_of_province == []:
@@ -159,19 +192,27 @@ class World():
 		self.list_of_states.append(state);
 
 
-	def draw_all(self, screen : pygame.Surface, mapsurface : pygame.Surface, mode = POLITICAL_MODE) -> None:
+	def draw_all(self, screen : pygame.Surface, mapsurface : pygame.Surface, mode : int = POLITICAL_MODE) -> None:
 		# Log.d("dra")
 		
 
 		for state in self.list_of_states:
-			state.draw(screen, mapsurface);
+			state.draw(screen, mapsurface, self, mode = mode);
 
 		for province in self.list_of_province:
 			province.draw(screen, mapsurface);
 
+	def draw_borders(self, screen, mapsurface): 
+		for province in self.list_of_province: province.draw(screen, mapsurface);
+	
 	def draw_graph(self, screen, mapsurface):
 		for province in self.list_of_province:
 			province.draw_connections(screen, mapsurface, self);
+
+	def draw_parameter(self, screen, mapsurface, parameter_mode):
+		Log.d(parameter_mode);
+		for province in self.list_of_province:
+			province.fill_draw(screen, mapsurface, mode =  parameter_mode);
 
 	def add_capital(self, coords : MapCoords, province : Province) -> None:
 		self.list_of_capitals.append(coords);

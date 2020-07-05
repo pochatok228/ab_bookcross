@@ -12,20 +12,21 @@ from handlers import MenuBlock # right and bottom menu blocks
 from handlers import Button
 
 from metascripts import Province, State, World;
-from metascripts import POLITICAL_MODE;
+from metascripts import POLITICAL_MODE, POPULATION_MODE
 
 
 
 
 
 optimized_myrange = myrange(None, None);
-current_version : str = "0.0.2.1";
+current_version : str = "0.0.2.2";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
 map_x, map_y  = 0, 0;
 scale : int = None;
 screen : pygame.Surface = None;
+bottom_button_group : object = None;
 
 
 
@@ -50,20 +51,27 @@ def check_buttons(events : list,
 				if button.collides(event.pos):
 					expectable_button = button
 					break
+			# Log.expects(expectable_button, None);
 			if expectable_button is not None and expectable_button.is_able_to_press():
-				pressed_button = expectable_button
+				pressed_button = expectable_button;
+				# Log.d(pressed_button.text);
 				if pressed_button.text == 'Delete Province':
 					# Log.d("delete_province button was pressed")
 					world.delete_province();
 					return 0;
+				Log.expects(pressed_button.mode, mode);
 				if pressed_button.mode != mode:
+
 					mode = pressed_button.mode;
+					Log.d(mode);
 					deactivate_buttons(button_group);
 					pressed_button.press();
+					return mode;
 				
 				else:
 					mode = 0;
 					activate_buttons(button_group);	
+	# Log.d(mode);
 	return mode
 
 def check_capitals(world: World, event_click : tuple, mapsurface : pygame.Surface) -> int: # id of province, whos capital has been pressed
@@ -179,14 +187,39 @@ def graphEditMode(events : list, screen, mapsurface : pygame.Surface, world : Wo
 		return capital_pressed;
 
 
+def editParameterMode(events : list, screen, mapsurface, world, parameter_mode):
 
+	if parameter_mode == POLITICAL_MODE:
+		# Log.d([i for i in bottom_button_group]);
+		parameter_mode = check_buttons(events, bottom_button_group, parameter_mode);
+		# Log.d(parameter_mode);
+	else:
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if mapsurface.collides(event.pos):
+					variable_capital_id = check_capitals(world, event.pos, mapsurface);
+					if variable_capital_id is not None:
+						province = world.get_province(variable_capital_id);
+						value_of_parameter = province.get_parameter(parameter_mode);
+						if event.button == 1:
+							if value_of_parameter < 100: value_of_parameter += 10;
+							else: value_of_parameter = int(value_of_parameter * 1.1);
+						elif event.button == 2:
+							if value_of_parameter < 100: value_of_parameter -= 10;
+							else:  value_of_parameter = int(value_of_parameter * 0.9);
+							if value_of_parameter < 0: value_of_parameter = 0;
+						province.set_parameter(parameter_mode, value_of_parameter);
+				else:
+					parameter_mode = check_buttons(events, bottom_button_group, parameter_mode);
+	if parameter_mode is None: return 0;
+	return parameter_mode;
 
 
 
 
 def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
-	global mapsurface, scale, screen, mapgroup
+	global mapsurface, scale, screen, mapgroup, bottom_button_group;
 
 	pygame.init();
 	pygame.display.set_caption("MapGen {}".format(current_version));
@@ -223,12 +256,23 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	edit_graph_button = Button(
 		x = 825, y = 325,
 		w = 150, h = 75, text = "Edit Graph", mode = 3);
+	edit_parameter_button = Button(
+		x = 825, y = 425, w = 150, h = 75, text = "Edit Parameter", mode = 4);
 
 	right_button_group.add(add_province_button);
 	right_button_group.add(delete_province_button);
 	right_button_group.add(add_state_button);
 	right_button_group.add(edit_graph_button);
+	right_button_group.add(edit_parameter_button);
 
+
+	bottom_button_group = pygame.sprite.Group();
+
+	political_parameter_button = Button(x = 10, y = 805, w = 180, h = 40, text = "Political", mode = POLITICAL_MODE);
+	population_parameter_button = Button(x = 10, y = 855, w = 180, h = 40, text = "Population", mode = POPULATION_MODE);
+
+	bottom_button_group.add(political_parameter_button);
+	bottom_button_group.add(population_parameter_button);
 
 
 
@@ -238,12 +282,15 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	last_coords = None;
 	current_added_province = None;
 	text_showing : bool = True; icon_showing : bool = True;
+	parameter_mode : int = POLITICAL_MODE;
+	Log.d(parameter_mode);
 
 	"""
 		Mode 0: 	is the mode with political map showing and nothinhg else
 		Mode 1: 	mode when user adds province drawing polygons
 		Mode 2: 	mode when user color provinces into countries
 		Mode 3: 	mode when user draw a graph
+		Mode 4:		mode when user is editing a province parameters
 	"""
 
 
@@ -269,11 +316,12 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 		screen.fill((228, 228, 228))
 		# Log.expects(myrange(0, 2).contains(mode), True);
 
-		if myrange(0, 3).contains(mode):
+		if myrange(0, 4).contains(mode):
 			pressed, last_coords = MapMovementAndZoom(frameEventsList, pressed, last_coords);
 			mapgroup.draw(screen);
-			world.draw_all(screen, mapsurface);
-			world.draw_graph(screen, mapsurface);
+			if myrange(0, 3).contains(mode): world.draw_all(screen, mapsurface, mode = parameter_mode);
+			if mode == 3 : world.draw_graph(screen, mapsurface);
+			if mode == 4: world.draw_borders(screen, mapsurface);
 		
 		
 
@@ -305,11 +353,13 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 					world.addState(current_added_state);
 				elif mode == 3:
 					pass
+				elif mode == 4:
+					pass
 				continue
 
 
 
-		if myrange(1, 3).contains(mode): # mode exit
+		if myrange(1, 4).contains(mode): # mode exit
 			try:
 				new_mode : int = check_buttons(frameEventsList, right_button_group, mode);
 				if mode != new_mode : old_mode = mode; mode = new_mode; raise ModeChangeProcedure;
@@ -317,7 +367,9 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 				if mode == 0:
 					if old_mode == 1:
 						current_added_province = None;
-						if len(world.list_of_capitals) != len(world.list_of_province): world.list_of_province.pop(); Log.d(len(world.list_of_capitals), len(world.list_of_province))
+						if len(world.list_of_capitals) != len(world.list_of_province): 
+							world.list_of_province.pop(); 
+							# Log.d(len(world.list_of_capitals), len(world.list_of_province));
 						
 					elif old_mode == 2:
 						current_added_state = None;
@@ -336,10 +388,16 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 		elif mode == 3:
 			capital_pressed = graphEditMode(frameEventsList, screen, mapsurface, world, capital_pressed);
 
+		elif mode == 4:
+
+			parameter_mode = editParameterMode(frameEventsList, screen, mapsurface, world, parameter_mode);
+			# Log.d(parameter_mode);
+			world.draw_parameter(screen, mapsurface, parameter_mode);
 
 
 		menu_blocks_group.draw(screen); # блоки меню отрисовываются при любом режиме работы программы
 		right_button_group.draw(screen); # кнопки отрисовываются при любом режиме работы программы.	
+		bottom_button_group.draw(screen);
 		# if icon_showing: world.icon_draw(screen, mapsurface);
 		pygame.display.flip()
 

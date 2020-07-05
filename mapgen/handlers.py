@@ -61,7 +61,6 @@ class Button(pygame.sprite.Sprite):
 
 		self.mode : int = mode;
 
-		
 		self.rect = pygame.Rect((x, y, w, h));
 		self.image = pygame.Surface((w, h));
 		self.image.fill(pygame.Color(28, 28, 28));
@@ -76,8 +75,9 @@ class Button(pygame.sprite.Sprite):
 		self.font = pygame.font.SysFont('Century Gothic', 14);
 		self.text_render = self.font.render(self.text, 1, self.color);
 
-		self.image.blit(self.text_render, (10, 25));
+		self.image.blit(self.text_render, (10, self.rect.h // 2 - 14 // 2));
 
+		# Log.d(self.text, self.mode);
 
 	def activate(self) -> None:
 		self.color = self.active_color;
@@ -93,7 +93,7 @@ class Button(pygame.sprite.Sprite):
 
 	def update(self) -> None:
 		self.text_render = self.font.render(self.text, 1, self.color);
-		self.image.blit(self.text_render, (10, 25));
+		self.image.blit(self.text_render, (10, self.rect.h // 2 - 14 // 2));
 
 	def collides(self, mouseclick_coords : tuple) -> bool: # tuple of int
 		x1 = self.rect.x;

@@ -11,15 +11,15 @@ class Log:
 
 	def i(*msg):
 
-		print(">>> INFO ({}) : {}".format(time.ctime(time.time()), *[str(i) for i in msg]));
+		print(">>> INFO ({}) : {}".format(time.ctime(time.time()), ', '.join([str(i) for i in msg])));
 
 	def d(*msg):
 
-		print(">>> DEBUG ({}) : {}".format(time.ctime(time.time()), *[str(i) for i in msg]));
+		print(">>> DEBUG ({}) : {}".format(time.ctime(time.time()), ', '.join([str(i) for i in msg])));
 
 	def e(*msg):
 
-		print(">>> ERROR ({}) : {}".format(time.ctime(time.time()), *[str(i) for i in msg]));
+		print(">>> ERROR ({}) : {}".format(time.ctime(time.time()), ', '.join([str(i) for i in msg])));
 
 	def expects(variable, value):
 
