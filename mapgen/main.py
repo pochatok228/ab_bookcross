@@ -12,14 +12,18 @@ from handlers import MenuBlock # right and bottom menu blocks
 from handlers import Button
 
 from metascripts import Province, State, World;
-from metascripts import POLITICAL_MODE, POPULATION_MODE
+
+# ================ ИМПОРТИРОВАТЬ ПАРАМЕТР =====================
+from metascripts import POLITICAL_MODE, POPULATION_MODE, PRODUCTION_MODE;
+from metascripts import EDUCATION_MODE, ARMY_MODE, NATURAL_RESOURCES_MODE;
+from metascripts import SEPARATISM_MODE, CLIMATE_MODE, SEA_MODE, DEFENSIVE_ABILITY_MODE;
 
 
 
 
 
 optimized_myrange = myrange(None, None);
-current_version : str = "0.0.2.2";
+current_version : str = "0.0.3";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
@@ -63,7 +67,7 @@ def check_buttons(events : list,
 				if pressed_button.mode != mode:
 
 					mode = pressed_button.mode;
-					Log.d(mode);
+					# Log.d(mode);
 					deactivate_buttons(button_group);
 					pressed_button.press();
 					return mode;
@@ -204,11 +208,12 @@ def editParameterMode(events : list, screen, mapsurface, world, parameter_mode):
 						if event.button == 1:
 							if value_of_parameter < 100: value_of_parameter += 10;
 							else: value_of_parameter = int(value_of_parameter * 1.1);
-						elif event.button == 2:
+						elif event.button == 3:
 							if value_of_parameter < 100: value_of_parameter -= 10;
 							else:  value_of_parameter = int(value_of_parameter * 0.9);
 							if value_of_parameter < 0: value_of_parameter = 0;
 						province.set_parameter(parameter_mode, value_of_parameter);
+						Log.d(parameter_mode, value_of_parameter);
 				else:
 					parameter_mode = check_buttons(events, bottom_button_group, parameter_mode);
 	if parameter_mode is None: return 0;
@@ -268,11 +273,28 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 
 	bottom_button_group = pygame.sprite.Group();
 
+# ================== ДОБАВЛЯТЬ КНОПКУ ДЛЯ ПАРАМЕТРОВ ===================
 	political_parameter_button = Button(x = 10, y = 805, w = 180, h = 40, text = "Political", mode = POLITICAL_MODE);
 	population_parameter_button = Button(x = 10, y = 855, w = 180, h = 40, text = "Population", mode = POPULATION_MODE);
-
+	production_parameter_button = Button(x = 210, y = 805, w = 180, h = 40, text = "Production", mode = PRODUCTION_MODE)
+	education_parameter_button = Button(x = 210, y = 855, w = 180, h = 40, text = "Education", mode = EDUCATION_MODE)
+	army_parameter_button = Button(x = 410, y = 805, w = 180, h = 40, text = "Army", mode = ARMY_MODE);
+	natural_resources_button = Button(x = 410, y = 855, w = 180, h = 40, text = "Natural Resources", mode = NATURAL_RESOURCES_MODE);
+	separatism_button = Button(x = 610, y = 805, w = 180, h = 40, text = "Separatism", mode = SEPARATISM_MODE);
+	climate_button = Button(x = 610, y = 855, w = 180, h = 40, text = "Climate auspiciousness", mode = CLIMATE_MODE);
+	sea_button = Button(x = 810, y = 805, w = 180, h = 40, text = 'Water Provinces', mode = SEA_MODE);
+	defensive_ability_button = Button(x = 810, y = 855, w = 180, h = 40, text = "Defensive ability", mode = DEFENSIVE_ABILITY_MODE);
+# ============== ЗАСОВЫВАТЬ КНОПКУ В СВОЮ ГРУППУ ======================
 	bottom_button_group.add(political_parameter_button);
 	bottom_button_group.add(population_parameter_button);
+	bottom_button_group.add(production_parameter_button);
+	bottom_button_group.add(education_parameter_button);
+	bottom_button_group.add(army_parameter_button);
+	bottom_button_group.add(natural_resources_button);
+	bottom_button_group.add(separatism_button);
+	bottom_button_group.add(climate_button);
+	bottom_button_group.add(sea_button);
+	bottom_button_group.add(defensive_ability_button);
 
 
 
@@ -283,7 +305,7 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	current_added_province = None;
 	text_showing : bool = True; icon_showing : bool = True;
 	parameter_mode : int = POLITICAL_MODE;
-	Log.d(parameter_mode);
+	# Log.d(parameter_mode);
 
 	"""
 		Mode 0: 	is the mode with political map showing and nothinhg else
@@ -343,7 +365,7 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 					current_added_province = Province();
 					current_added_province.set_id(world.get_new_province_id());
 					current_added_province.set_name(province_name);
-					Log.d(current_added_province.get_name());
+					# Log.d(current_added_province.get_name());
 					world.addProvince(current_added_province);
 				elif mode == 2:
 					state_name = Dialog().get(message = "Введите название страны");

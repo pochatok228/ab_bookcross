@@ -2,8 +2,17 @@ import pygame
 from utils import *
 import random
 
+# =============== ОПРЕДЕЛЯТЬ ПАРАМЕТР ================
 POLITICAL_MODE = 0
 POPULATION_MODE = 1
+PRODUCTION_MODE = 2
+EDUCATION_MODE = 3
+ARMY_MODE = 4
+NATURAL_RESOURCES_MODE = 5
+SEPARATISM_MODE = 6
+CLIMATE_MODE = 7
+SEA_MODE = 8
+DEFENSIVE_ABILITY_MODE = 9
 
 
 """
@@ -21,10 +30,19 @@ POPULATION_MODE = 1
 
 """
 
+
+# ================= ОПРЕДЕЛЯТЬ ЦВЕТ ПАРАМЕТРА ==================
 color_dict = {
 	POLITICAL_MODE : pygame.Color(255, 255, 255),
-	POPULATION_MODE : pygame.Color(0, 152, 0),
-
+	POPULATION_MODE : pygame.Color(255, 103, 255),
+	PRODUCTION_MODE : pygame.Color(0, 255, 255),
+	EDUCATION_MODE : pygame.Color(255, 255, 0),
+	ARMY_MODE : pygame.Color(50, 50, 50),
+	NATURAL_RESOURCES_MODE : pygame.Color(9, 90, 220),
+	SEPARATISM_MODE : pygame.Color(0, 255, 0),
+	CLIMATE_MODE: pygame.Color(70, 0, 5),
+	SEA_MODE : pygame.Color(213, 113, 0),
+	DEFENSIVE_ABILITY_MODE : pygame.Color(200, 175, 251)
 };
 class Province():
 
@@ -44,9 +62,23 @@ class Province():
 		self.text_render = self.font.render(self.name, 1, self.color);
 		self.rect_chars = self.text_render.get_rect();
 
-		self.population = 0;
-		self.productions = 0;
-		
+
+ # ========== ДОБАВЛЯТЬ ПЕРЕМЕННЫЕ ДЛЯ ПАРАМЕТРОВ =================
+		self.population = 100; #	 население провинции, измеряется в человеках. 
+							 # 	Чем больше людей, тем дороже управление провинцией
+		self.productions = 100; # 	количество производств в провинции, измеряется в штуках.
+							  #		Чем больше производств, тем больше доход от провинции 
+		self.education = 100;   # 	уровень образования. Целое число от 0 до 1000, хз в чем меряется
+							  #		уровень образования будет давать плюшки
+		self.army = 10; 		  #		 количество вояк в провинции, измеряется в человеках.
+		self.natural_resources = 100; # количество природных ресурсов. Чем больше природных ресурсов,
+									# тем дешевле создание производства
+									#  От каждого нового производства истощаются.
+		self.separatism = 50; # желание отделиться от государства 0-1000. При тысяче, провинция отделяется.
+		self.climate = 100; # 0-1000 благоприятность климата
+		self.sea = 0; # if value is >0 province is a part of a sea
+		self.defensive_ability = 100; # значение 0 - 1000, увеличивает боеспособность солдат, обороняющих территорию
+
 
 
 
@@ -84,21 +116,31 @@ class Province():
 
 	def fill_draw(self, screen, mapsurface, world,  mode : int = 0) -> None:
 		dots : list = [coords.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords()).get_coords() for coords in self.polygons];
-		Log.d(mode);
+		# Log.d(mode);
 		if mode == POLITICAL_MODE and self.state is not None:
 			if len(dots) >=3: 
 				pygame.draw.polygon(screen,
 				(self.state.color.r, self.state.color.g, self.state.color.b, self.state.color.a), dots, 0);
 				return None;
-		elif mode in [POPULATION_MODE]:
-			Log.d("went here");
+
+# ======== ДОБАВЛЯТЬ ПАРАМЕТРЫ СЮДОЙ ==============
+
+		elif mode in [POPULATION_MODE, PRODUCTION_MODE, EDUCATION_MODE, ARMY_MODE, NATURAL_RESOURCES_MODE,
+						SEPARATISM_MODE, CLIMATE_MODE, SEA_MODE, DEFENSIVE_ABILITY_MODE]:
+			# Log.d("went here");
 			max_paramter = max([province.get_parameter(mode) for province in world.list_of_province]);
 			self.color_parameter = pygame.Color(255, 255, 255) - color_dict[mode];
-			percent = self.get_parameter(mode) / max_paramter;
-			self.color_parameter *= percent;
+			try: percent = self.get_parameter(mode) / max_paramter;
+			except ZeroDivisionError: percent : float = 1.0;
+			self.color_parameter = pygame.Color(int(self.color_parameter.r * percent), int(self.color_parameter.g * percent), int(self.color_parameter.b * percent));
 			if len(dots) >= 3: pygame.draw.polygon(screen,
 				self.color_parameter, dots, 0);
 		else: pass;
+		if self.capital_coords is not None:
+			screen_coords = self.capital_coords.toScreenCoords(mapsurface.get_scale(), mapsurface.get_coords());
+			pygame.draw.circle(screen, 
+				self.color,
+				(screen_coords.x, screen_coords.y), 10, 0);
 		pass;
 
 
@@ -113,14 +155,33 @@ class Province():
 
 
 		
-
+# ===============ДОБАВЛЯТЬ ПАРАМЕТРЫ НА ГЕТ====================
 	def get_parameter(self, mode) -> object: # in most of cases INT
 		if mode == POLITICAL_MODE: return 0;
 		elif mode == POPULATION_MODE: return self.population;
+		elif mode == PRODUCTION_MODE: return self.productions;
+		elif mode == EDUCATION_MODE: return self.education;
+		elif mode == ARMY_MODE: return self.army;
+		elif mode == NATURAL_RESOURCES_MODE: return self.natural_resources;
+		elif mode == SEPARATISM_MODE: return self.separatism;
+		elif mode == CLIMATE_MODE: return self.climate;
+		elif mode == SEA_MODE: return self.sea;
+		elif mode == DEFENSIVE_ABILITY_MODE : return self.defensive_ability
 
-	def set_parameter(self, mode, value) -> None:
+
+#===================== ДОБАВЛЯТЬ ПАРАМЕТРЫ НА СЕТ======================
+	def set_parameter(self, mode : int, value : object) -> None:
 		if mode == POLITICAL_MODE: return None;
-		elif mode == POPULATION_MODE: self.population = value; return None;
+		elif mode == POPULATION_MODE: self.population = value; 
+		elif mode == PRODUCTION_MODE: self.productions = value; 
+		elif mode == EDUCATION_MODE: self.education = value; 
+		elif mode == ARMY_MODE: self.army = value; 
+		elif mode == NATURAL_RESOURCES_MODE: self.natural_resources = value; 
+		elif mode == SEPARATISM_MODE: self.separatism = value; 
+		elif mode == CLIMATE_MODE: self.climate = value; 
+		elif mode == SEA_MODE: self.sea = value; 
+		elif mode == DEFENSIVE_ABILITY_MODE: self.defensive_ability = value;
+		return None;
 
 
 	
@@ -210,9 +271,9 @@ class World():
 			province.draw_connections(screen, mapsurface, self);
 
 	def draw_parameter(self, screen, mapsurface, parameter_mode):
-		Log.d(parameter_mode);
+		# Log.d(parameter_mode);
 		for province in self.list_of_province:
-			province.fill_draw(screen, mapsurface, mode =  parameter_mode);
+			province.fill_draw(screen, mapsurface, self, mode =  parameter_mode);
 
 	def add_capital(self, coords : MapCoords, province : Province) -> None:
 		self.list_of_capitals.append(coords);
