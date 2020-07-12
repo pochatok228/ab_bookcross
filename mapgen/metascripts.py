@@ -321,8 +321,18 @@ class World():
 	def get_state(self, id : int) -> State: return self.list_of_states[id];
 
 	def compile_script(self):
-		file_name = Dialog.get_file();
+		file_name = Dialog().get_file();
 		csharp_generation_script = [];
+
+		csharp_generation_script.append("using System.Collections;")
+		csharp_generation_script.append("using System.Collections.Generic;")
+		csharp_generation_script.append("using UnityEngine;")
+		csharp_generation_script.append("public class mapgen : MonoBehaviour {");
+		csharp_generation_script.append("    void Start(){");
+
+
+		csharp_generation_script.append("    }");
+		csharp_generation_script.append("}");
 
 # ============== Самое интересное ====== 
 		with open(file_name, 'w') as file:
