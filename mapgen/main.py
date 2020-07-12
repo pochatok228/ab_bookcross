@@ -7,6 +7,7 @@ from utils import ModeChangeProcedure # logging and range classes
 from utils import ScreenCoords, MapCoords, UnityCoords # descritprion in the beginning of metascripts.py
 from utils import toScreenCoords, toMapCoords, toUnityCoords 
 from utils import Dialog
+from utils import PoliticalCoords, DiplomacyCoords;
 from handlers import Map
 from handlers import MenuBlock # right and bottom menu blocks
 from handlers import Button
@@ -21,9 +22,9 @@ from metascripts import SEPARATISM_MODE, CLIMATE_MODE, SEA_MODE, DEFENSIVE_ABILI
 
 
 
-
+# ============ ОПРЕДЕЛЕНИЯ ==================
 optimized_myrange = myrange(None, None);
-current_version : str = "0.0.3";
+current_version : str = "0.0.4";
 resolution : tuple = (1000, 900);
 mapsurface : pygame.Surface = None;
 mapgroup : pygame.sprite.Group = None;
@@ -31,6 +32,10 @@ map_x, map_y  = 0, 0;
 scale : int = None;
 screen : pygame.Surface = None;
 bottom_button_group : object = None;
+
+state_icons_group  = pygame.sprite.Group();
+
+# ================= КОНЕЦ ОПРЕДЕЛЕНИЯ ГЛОБАЛЬНЫХ ПЕРЕМЕННЫХ =============
 
 
 
@@ -63,7 +68,10 @@ def check_buttons(events : list,
 					# Log.d("delete_province button was pressed")
 					world.delete_province();
 					return 0;
-				Log.expects(pressed_button.mode, mode);
+				if pressed_button.text == 'Compile Script':
+					world.compile_script();
+					return 0;
+				# Log.expects(pressed_button.mode, mode);
 				if pressed_button.mode != mode:
 
 					mode = pressed_button.mode;
@@ -220,6 +228,66 @@ def editParameterMode(events : list, screen, mapsurface, world, parameter_mode):
 	return parameter_mode;
 
 
+def editPoliticalCoords(events, screen, world, chosen_state):
+	# Log.d(type(chosen_state));
+	screen.fill((28, 28, 28));
+	pygame.draw.line(screen, pygame.Color("white"), (400, 0), (400, 800), 5)
+	pygame.draw.line(screen, pygame.Color("white"), (0, 400), (800, 400), 5);
+
+	for state in world.list_of_states:
+		state.update_self_political_coords(screen);
+	state_icons_group.draw(screen);
+	if chosen_state is None:
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					for state in world.list_of_states:
+						x_collision =  myrange(state.icon.rect[0], state.icon.rect[0] + state.icon.rect[2]).contains(event.pos[0]);
+						y_collision = myrange(state.icon.rect[1], state.icon.rect[1] + state.icon.rect[3]).contains(event.pos[1]);
+						# Log.d(x_collision, y_collision);
+						if x_collision and y_collision:
+							return state
+
+	elif chosen_state is not None:
+		pygame.draw.rect(screen, pygame.Color("red"),
+						tuple([*chosen_state.icon.rect]), 5);
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					chosen_state.political_coords = PoliticalCoords(event.pos[0] / 40 - 10, event.pos[1] / 40 - 10);
+					return None;
+	return chosen_state;
+
+def editDiplomacyCoords(events, screen, world, chosen_state):
+	screen.fill((28, 28, 28));
+	pygame.draw.line(screen, pygame.Color("white"), (400, 0), (400, 800), 5)
+	pygame.draw.line(screen, pygame.Color("white"), (0, 400), (800, 400), 5);
+
+	for state in world.list_of_states:
+		state.update_self_diplomacy_coords(screen);
+	state_icons_group.draw(screen);
+	if chosen_state is None:
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					for state in world.list_of_states:
+						x_collision =  myrange(state.icon.rect[0], state.icon.rect[0] + state.icon.rect[2]).contains(event.pos[0]);
+						y_collision = myrange(state.icon.rect[1], state.icon.rect[1] + state.icon.rect[3]).contains(event.pos[1]);
+						# Log.d(x_collision, y_collision);
+						if x_collision and y_collision:
+							return state
+
+	elif chosen_state is not None:
+		pygame.draw.rect(screen, pygame.Color("red"),
+						tuple([*chosen_state.icon.rect]), 5);
+		for event in events:
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if event.button == 1:
+					chosen_state.diplomacy_coords = DiplomacyCoords(event.pos[0] / 40 - 10, event.pos[1] / 40 - 10);
+					return None;
+	return chosen_state;
+
+
 
 
 def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
@@ -263,13 +331,21 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 		w = 150, h = 75, text = "Edit Graph", mode = 3);
 	edit_parameter_button = Button(
 		x = 825, y = 425, w = 150, h = 75, text = "Edit Parameter", mode = 4);
+	political_coordinates_button = Button(
+		x = 825, y = 525, w = 150, h = 75, text = "Political Coords", mode = 5)
+	diplomacy_coordinates_button = Button(
+		x = 825, y = 625, w = 150, h = 75, text = "Diplomacy Coords", mode = 6);
+	compile_script_button = Button(
+		x = 825, y = 725, w = 150, h = 75, text = "Compile Script", mode = 0);
 
 	right_button_group.add(add_province_button);
 	right_button_group.add(delete_province_button);
 	right_button_group.add(add_state_button);
 	right_button_group.add(edit_graph_button);
 	right_button_group.add(edit_parameter_button);
-
+	right_button_group.add(political_coordinates_button);
+	right_button_group.add(diplomacy_coordinates_button);
+	right_button_group.add(compile_script_button);
 
 	bottom_button_group = pygame.sprite.Group();
 
@@ -305,6 +381,8 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 	current_added_province = None;
 	text_showing : bool = True; icon_showing : bool = True;
 	parameter_mode : int = POLITICAL_MODE;
+
+	chosen_state : State = None;
 	# Log.d(parameter_mode);
 
 	"""
@@ -313,6 +391,8 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 		Mode 2: 	mode when user color provinces into countries
 		Mode 3: 	mode when user draw a graph
 		Mode 4:		mode when user is editing a province parameters
+		Mode 5:		mode when user edit political coordinates
+		Mode 6: 	mode when user edit diplomacy coordinates
 	"""
 
 
@@ -372,16 +452,15 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 					current_added_state = State();
 					current_added_state.set_id(world.get_new_state_id());
 					current_added_state.set_name(state_name);
+					current_added_state.add_self_to_group(state_icons_group);
 					world.addState(current_added_state);
-				elif mode == 3:
-					pass
-				elif mode == 4:
-					pass
+
+				elif myrange(3, 6).contains(mode): pass;
 				continue
 
 
 
-		if myrange(1, 4).contains(mode): # mode exit
+		if myrange(1, 6).contains(mode): # mode exit
 			try:
 				new_mode : int = check_buttons(frameEventsList, right_button_group, mode);
 				if mode != new_mode : old_mode = mode; mode = new_mode; raise ModeChangeProcedure;
@@ -415,6 +494,13 @@ def main(world : World, mapfile : str = "skyrim_map.jpg") -> int:
 			parameter_mode = editParameterMode(frameEventsList, screen, mapsurface, world, parameter_mode);
 			# Log.d(parameter_mode);
 			world.draw_parameter(screen, mapsurface, parameter_mode);
+
+		elif mode == 5:
+			chosen_state = editPoliticalCoords(frameEventsList, screen, world, chosen_state);
+		elif mode == 6:
+			chosen_state = editDiplomacyCoords(frameEventsList, screen, world, chosen_state);
+
+
 
 
 		menu_blocks_group.draw(screen); # блоки меню отрисовываются при любом режиме работы программы

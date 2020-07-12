@@ -77,6 +77,25 @@ class Coords():
 		return str((self.x, self.y));
 
 
+class PoliticalCoords(Coords):
+
+	def __init__(self, x : float, y : float) -> None:
+		if myrange(-10, 10).contains(x) and myrange(-10, 10).contains(y): super().__init__(x, y);
+		else: raise TypeException; del self;
+		self.x = x;
+		self.y = y;
+
+
+class DiplomacyCoords(Coords):
+
+	def __init__(self, x : float, y : float) -> None:
+		if myrange(-10, 10).contains(x) and myrange(-10, 10).contains(y): super().__init__(x, y);
+		else: raise TypeException; del self;
+		self.x = x; self.y = y;
+		
+
+	# def get_distance(self, other) would be realised in C#
+
 class MapCoords(Coords):
 
 	def __init__(self, x : int, y : int) -> None:

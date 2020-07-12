@@ -214,6 +214,15 @@ class State():
 		self.color.a = 100;
 		# Log.d(self.color.a);
 
+		self.political_coords = PoliticalCoords(0, 0);
+		self.diplomacy_coords = DiplomacyCoords(0, 0);
+
+		self.icon_file = Dialog().get_file();
+		self.icon = pygame.sprite.Sprite();
+		self.icon.image = pygame.transform.scale(pygame.image.load(self.icon_file), (50, 50));
+		self.icon.rect = (375, 375, 50, 50);
+
+
 
 	def draw(self, screen : pygame.Surface, mapsurface: pygame.Surface, world, mode : int = 0) -> None:
 		for province in self.list_of_province:
@@ -226,6 +235,20 @@ class State():
 		province.set_state(self);
 		# Log.d(province.get_name());
 
+	def add_self_to_group(self, group):
+		self.group = group
+		self.icon.add(self.group)
+		
+
+	def update_self_political_coords(self, screen):
+		self.icon.rect = (int((self.political_coords.x + 10)* 40) - 25, 
+			int((self.political_coords.y + 10) * 40) - 25,
+			 50, 50);
+
+	def update_self_diplomacy_coords(self, screen):
+		self.icon.rect = (int((self.diplomacy_coords.x + 10)* 40) - 25, 
+			int((self.diplomacy_coords.y + 10) * 40) - 25,
+			 50, 50);
 
 	def set_id(self, id : int) -> None: self.id = id;
 	def set_name(self, name : str) -> None: self.name = name;
@@ -296,4 +319,12 @@ class World():
 	def get_new_state_id(self) -> int: return len(self.list_of_states);
 	def get_province(self, id : int) -> Province: return self.list_of_province[id];
 	def get_state(self, id : int) -> State: return self.list_of_states[id];
+
+	def compile_script(self):
+		file_name = Dialog.get_file();
+		csharp_generation_script = [];
+
+# ============== Самое интересное ====== 
+		with open(file_name, 'w') as file:
+			file.write("\n".join(csharp_generation_script))
 
