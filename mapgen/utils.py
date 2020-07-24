@@ -104,7 +104,7 @@ class MapCoords(Coords):
 
 	def toUnityCoords(self):
 
-		pass
+		return UnityCoords(self.x / 16 - 50, self.y / 16 - 50)
 
 	def toScreenCoords(self, scale : int, map_coords : tuple):
 		map_pixels_in_scale = self.scale_dict[scale][0];
@@ -132,7 +132,7 @@ class ScreenCoords(Coords):
 
 
 class UnityCoords(Coords):
-	def __init__(self, x : int, y : int) -> None:
+	def __init__(self, x : float, y : float) -> None:
 		super().__init__(x, y);
 
 	def toMapCoords(self) -> MapCoords:

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public static class Triangulation
+public class triangulation
 {
     public static void GetResult(List<Vector3> points, bool clockwise, Vector3 upAxis, out Vector3[] verticles, out int[] triangles, out Vector2[] uvcoords)
     {

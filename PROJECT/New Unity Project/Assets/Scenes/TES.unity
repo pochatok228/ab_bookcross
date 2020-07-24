@@ -433,7 +433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraMovementPerFrame: 0.5
-  CameraBorder: 75
+  CameraBorder: 50
 --- !u!114 &1924036482
 MonoBehaviour:
   m_ObjectHideFlags: 0

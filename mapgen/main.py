@@ -19,9 +19,6 @@ from metascripts import POLITICAL_MODE, POPULATION_MODE, PRODUCTION_MODE;
 from metascripts import EDUCATION_MODE, ARMY_MODE, NATURAL_RESOURCES_MODE;
 from metascripts import SEPARATISM_MODE, CLIMATE_MODE, SEA_MODE, DEFENSIVE_ABILITY_MODE;
 
-
-
-
 # ============ ОПРЕДЕЛЕНИЯ ==================
 optimized_myrange = myrange(None, None);
 current_version : str = "0.0.4";

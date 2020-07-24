@@ -1,7 +1,7 @@
 import pygame
 from utils import *
 import random
-
+from code_construct import *
 # =============== ОПРЕДЕЛЯТЬ ПАРАМЕТР ================
 POLITICAL_MODE = 0
 POPULATION_MODE = 1
@@ -322,19 +322,9 @@ class World():
 
 	def compile_script(self):
 		file_name = Dialog().get_file();
-		csharp_generation_script = [];
-
-		csharp_generation_script.append("using System.Collections;")
-		csharp_generation_script.append("using System.Collections.Generic;")
-		csharp_generation_script.append("using UnityEngine;")
-		csharp_generation_script.append("public class mapgen : MonoBehaviour {");
-		csharp_generation_script.append("    void Start(){");
 
 
-		csharp_generation_script.append("    }");
-		csharp_generation_script.append("}");
-
-# ============== Самое интересное ====== 
+# ============== Самое интересное ======
 		with open(file_name, 'w') as file:
-			file.write("\n".join(csharp_generation_script))
+			file.write(Construction(self))
 
