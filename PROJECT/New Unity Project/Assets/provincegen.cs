@@ -25,6 +25,9 @@ public class provincegen : MonoBehaviour
     public Color current_color;
     private float y_size = 0.5f;
 
+    public Vector3[] verticles;
+    public int[] triangles;
+
 
     private List<Vector3> triangulation_result;
     void Start()
@@ -32,49 +35,46 @@ public class provincegen : MonoBehaviour
         triangulation triangulation = new triangulation();
 
         Debug.Log("I`ve started");
-        Vector3[] verticles;
-        int[] triangles;
-        Vector2[] uvcoords;
-        triangulation.GetResult(dots, true, new  Vector3(0, -1, 0), out verticles, out triangles, out uvcoords);
+       
         foreach(Vector3 verticle in verticles) { Debug.Log(verticle); }
         Construct(verticles, triangles);
     }
 
     void Construct(Vector3[] verticles, int[] triangles)
     {
-        List<int> list_triangles = new List<int>();
-        int original_dots_quantity = dots.Count;
-        int original_verticles_quantity = verticles.Length;
+        int original_verticles_quantity = verticles.Length; int original_triangles_quantity = triangles.Length;
+        List<Vector3> list_of_verticles = new List<Vector3>();
+        List<int> list_of_triangles = new List<int>();
 
-        // Debug.Log(original_dots_quantity);
-        // Debug.Log(original_verticles_quantity);
-        List<Vector3> verticles_modified = new List<Vector3>();
+        for (int i = 0; i < original_verticles_quantity; i++) list_of_verticles.Add(verticles[i]); // добавляем все вершины
+        for (int i = 0; i < original_triangles_quantity; i++) list_of_triangles.Add(triangles[i]); // добавляем все треугольники 
+        for (int i = 0; i < original_verticles_quantity; i++) list_of_verticles.Add(BottomDot(verticles[i])); // добавляем нижние точки
 
-        for (int i = 0; i < original_verticles_quantity; i += 3) { verticles_modified.Add(verticles[i + 2]); verticles_modified.Add(verticles[i + 1]); verticles_modified.Add(verticles[i]); }
-        for (int i = 0; i < original_dots_quantity; i++)
+
+        for (int i = 0; i < original_verticles_quantity; i++) // добавляем по два треуголника на угловую вертикаль
         {
-            Vector3 original_dot = dots[i];
-            verticles_modified.Add(original_dot);
-            verticles_modified.Add(BottomDot(original_dot));
-            if (i == 0) verticles_modified.Add(dots[original_dots_quantity - 1]);
-            else verticles_modified.Add(dots[i - 1]);
-            verticles_modified.Add(BottomDot(original_dot));
-            verticles_modified.Add(original_dot);
-            if (i == original_dots_quantity - 1) verticles_modified.Add(BottomDot(dots[0]));
-            else verticles_modified.Add(BottomDot(dots[i + 1]));
+            list_of_triangles.Add(i);
+            
+            if (i == 0) list_of_triangles.Add(original_verticles_quantity * 2 - 1);
+            else list_of_triangles.Add(i + original_verticles_quantity - 1);
+            list_of_triangles.Add(i + original_verticles_quantity);
+            list_of_triangles.Add(i + original_verticles_quantity);
+            if (i == original_verticles_quantity - 1) list_of_triangles.Add(0);
+            else list_of_triangles.Add(i + 1);
+            list_of_triangles.Add(i);
+
         }
-        verticles = verticles_modified.ToArray();
-        Array.Resize(ref triangles, verticles.Length);
-        for (int i = 0; i < triangles.Length; i++) triangles[i] = i;
-        
+
+        // Мэш-генерация
         foreach (Vector3 dot in verticles) { Debug.Log(dot);} foreach (int dot in triangles) { Debug.Log(dot); }
         Mesh mesh = new Mesh();
-        mesh.vertices = verticles; mesh.triangles = triangles;
+        mesh.vertices = list_of_verticles.ToArray(); mesh.triangles = list_of_triangles.ToArray();
         MeshFilter meshfilter = gameObject.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshfilter.mesh = mesh;
-        meshRenderer.material = new Material(Shader.Find("Unlit/Color"));
-        meshRenderer.material.color = state_color;
+        meshRenderer.material = new Material(Shader.Find("Legacy Shaders/Self-Illumin/Bumped Diffuse"));
+        meshRenderer.material.SetColor("Main Color", state_color);
+        Debug.Log(meshRenderer.material.color);
     }
 
     Vector3 BottomDot(Vector3 original_dot)

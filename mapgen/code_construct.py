@@ -1,9 +1,44 @@
 from utils import *
-from triangulation import *
+import triangulation
+
+
+def triangulation_function(province):
+
+	verticles : list = []; triangles : list = [];
+
+	polygons = [coords.toUnityCoords() for coords in province.polygons]
+	# print(polygons)
+	verticles = [(coords.x, coords.y) for coords in polygons]
+	Log.d(verticles)
+	verticles = verticles[::-1] if triangulation.IsClockwise(verticles) else verticles[:];
+	verticles_copy = verticles.copy()
+
+	while len(verticles) >= 3:
+		ear = triangulation.GetEar(verticles)
+		if ear == []:
+			break
+		triangles.append(ear)
+
+	for i in range(len(triangles)):
+		triangle = triangles[i]
+		triangle_normal  = []
+		for triangle_verticle in triangle: 
+			try:
+				triangle_normal.append(verticles_copy.index(triangle_verticle));
+			except Exception as e:
+				Log.d(triangle_verticle)
+				Log.d(verticles_copy)
+				Log.d(e)
+		triangles[i] = tuple(triangle_normal);
+	# Log.d(triangles)
+	return verticles_copy, triangles
+
+
+
 
 
 def Construction(world):
-	ta = []
+	ta = [];
 	ta.append("using System.Collections; using System.Collections.Generic; using UnityEngine;")
 	ta.append("")
 	ta.append("public class mapgen : MonoBehaviour {")
@@ -21,13 +56,17 @@ def Construction(world):
 		ta.append('        province_{}.name = "province_{}";'.format(i, i))
 		ta.append('        province_{}_provincegen = province_{}.GetComponent<provincegen>();'.format(i, i))
 		ta.append('        province_{}_provincegen.name = "{}";'.format(i, province.name))
-		"""
-		dots_string_begin = '        province_' + str (i) + '_provincegen.dots = new List<Vector3> {'
+		province_verticles, province_triangles = triangulation_function(province)
+		Log.d(province_verticles)
+		dots_string_begin = '        province_' + str (i) + '_provincegen.verticles = new Vector3[] {'
 		dots_string_end = '};'
-		dots_string_plot = ', '.join(["new Vector3({}, 0, {})".format(str(mc.toUnityCoords().x) + 'f', str(mc.toUnityCoords().y) + 'f') for mc in province.polygons])
-		"""
-
-		province_verticles, province_triangles = triangulate(province.polygons);
+		dots_string_plot = ', '.join(["new Vector3({}f, 0, {}f)".format(10 - coords[0], coords[1]) for coords in province_verticles])
+		Log.d(dots_string_plot)
+		ta.append(dots_string_begin + dots_string_plot + dots_string_end)
+		tr_b = "		province_" + str(i) + "_provincegen.triangles = new int[] {"
+		tr_p = ", ".join(["{}, {}, {}".format(i[0], i[1], i[2]) for i in province_triangles])
+		tr_e = "};"
+		ta.append(tr_b + tr_p + tr_e)
 		try:
 			ta.append('        province_{}_provincegen.state_color = new Color({}, {}, {});'.format(i, province.state.color.r, province.state.color.g, province.state.color.b));
 		except Exception:
