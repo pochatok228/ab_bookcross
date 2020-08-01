@@ -64,6 +64,7 @@ class Button(pygame.sprite.Sprite):
 		self.rect = pygame.Rect((x, y, w, h));
 		self.image = pygame.Surface((w, h));
 		self.image.fill(pygame.Color(28, 28, 28));
+		# self.image.fill(pygame.Color(255, 80, 80));
 
 
 		self.active_color = (228, 228, 228);

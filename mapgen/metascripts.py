@@ -26,7 +26,7 @@ DEFENSIVE_ABILITY_MODE = 9
 	ранжируются от 800х800 до 2200х2200
 
 	3. Координаты в Unity utils.UnityCoords() вещественные, для создания объекта в Unity
-	имеют ранжирование 10х10
+	имеют ранжирование 1000х1000
 
 """
 
@@ -327,4 +327,3 @@ class World():
 # ============== Самое интересное ======
 		with open(file_name, 'w') as file:
 			file.write(Construction(self))
-

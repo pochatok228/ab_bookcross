@@ -53,15 +53,16 @@ def Construction(world):
 	for i in range(len(world.list_of_province)):
 		province = world.list_of_province[i];
 		ta.append("        province_{} = Instantiate(province_template, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;".format(i))
-		ta.append('        province_{}.name = "province_{}";'.format(i, i))
+		# ta.append('        province_{}.name = "province_{}";'.format(i, i))
 		ta.append('        province_{}_provincegen = province_{}.GetComponent<provincegen>();'.format(i, i))
-		ta.append('        province_{}_provincegen.name = "{}";'.format(i, province.name))
+		ta.append('        province_{}_provincegen.name = "province_{}";'.format(i, i));
+		ta.append('        province_{}_provincegen.province_name = "{}";'.format(i, province.name));
 		province_verticles, province_triangles = triangulation_function(province)
-		Log.d(province_verticles)
+		# Log.d(province_verticles)
 		dots_string_begin = '        province_' + str (i) + '_provincegen.verticles = new Vector3[] {'
 		dots_string_end = '};'
 		dots_string_plot = ', '.join(["new Vector3({}f, 0, {}f)".format(10 - coords[0], coords[1]) for coords in province_verticles])
-		Log.d(dots_string_plot)
+		# Log.d(dots_string_plot)
 		ta.append(dots_string_begin + dots_string_plot + dots_string_end)
 		tr_b = "		province_" + str(i) + "_provincegen.triangles = new int[] {"
 		tr_p = ", ".join(["{}, {}, {}".format(i[0], i[1], i[2]) for i in province_triangles])

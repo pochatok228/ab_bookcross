@@ -22,8 +22,9 @@ public class provincegen : MonoBehaviour
     public int defensive_ability;
 
     public Color state_color;
-    public Color current_color;
-    private float y_size = 0.5f;
+    private Color current_color;
+
+    private float y_size = 0.005f;
 
     public Vector3[] verticles;
     public int[] triangles;
@@ -72,9 +73,26 @@ public class provincegen : MonoBehaviour
         MeshFilter meshfilter = gameObject.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshfilter.mesh = mesh;
-        meshRenderer.material = new Material(Shader.Find("Legacy Shaders/Self-Illumin/Bumped Diffuse"));
-        meshRenderer.material.SetColor("Main Color", state_color);
-        Debug.Log(meshRenderer.material.color);
+        meshRenderer.material = new Material(Shader.Find("Standard"));
+        Material province_material = meshRenderer.material;
+
+
+        // make color softer
+
+        float h, s, v;
+        Color.RGBToHSV(state_color, out h, out s, out v);
+        s = 0.5f; v = 1;
+        current_color = Color.HSVToRGB(h, s, v);
+
+        if (sea != 0) current_color = Color.white;
+
+
+        province_material.color = current_color;
+        // First you want to use the API with multiple materials
+        // where 3 should be the index you want to use...
+        var materials = GetComponent<Renderer>().materials;
+        materials[0].SetColor("_EmissionColor", current_color);
+        materials[0].EnableKeyword("_EMISSION");
     }
 
     Vector3 BottomDot(Vector3 original_dot)

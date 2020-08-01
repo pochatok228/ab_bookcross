@@ -67,7 +67,10 @@
     <Compile Include="Assets\provincegen.cs" />
     <Compile Include="Assets\Scripts\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\CameraZoom.cs" />
+    <Compile Include="Assets\ShadedWireframe.cs" />
+    <Compile Include="Assets\stategen.cs" />
     <Compile Include="Assets\Triangulation.cs" />
+    <None Include="Assets\Translucency.shader" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/pochatok228/Desktop Folders/bswap/PROJECT/New Unity Project/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
