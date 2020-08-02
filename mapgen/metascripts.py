@@ -265,8 +265,7 @@ class World():
 		self.list_of_states = []; # <State>
 		self.province_state_dict = {};
 		self.list_of_capitals = [];
-		# в случае с world за счет того, что у класса лишь один эземпляр
-		# функции типа get_parameter() не буду прописывать.
+
 
 
 	def addProvince(self, province : Province) -> None: self.list_of_province.append(province);
@@ -325,5 +324,8 @@ class World():
 
 
 # ============== Самое интересное ======
-		with open(file_name, 'w') as file:
-			file.write(Construction(self))
+		try:
+			with open(file_name, 'w') as file:
+				file.write(Construction(self))
+		except Exception:
+			pass;

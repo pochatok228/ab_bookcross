@@ -43,3 +43,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08d89a1a88c69714d885fa08fc7d025b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dots: []
+  province_name: 
+  population: 0
+  productions: 0
+  education: 0
+  army: 0
+  natural_resources: 0
+  separatism: 0
+  climate: 0
+  sea: 0
+  defensive_ability: 0
+  state: {fileID: 0}
+  connections: []
+  capital_coords: {x: 0, y: 0, z: 0}
+  state_color: {r: 0, g: 0, b: 0, a: 0}
+  verticles: []
+  triangles: 

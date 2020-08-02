@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\intendant.cs" />
     <Compile Include="Assets\mapgen.cs" />
     <Compile Include="Assets\provincegen.cs" />
     <Compile Include="Assets\Scripts\CameraMovement.cs" />

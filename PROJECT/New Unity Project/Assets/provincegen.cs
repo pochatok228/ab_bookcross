@@ -20,29 +20,27 @@ public class provincegen : MonoBehaviour
     public int climate;
     public int sea;
     public int defensive_ability;
+    public GameObject state;
+    public List<GameObject> connections = new List<GameObject>();
+    public Vector3 capital_coords;
 
     public Color state_color;
-    private Color current_color;
+    private Color current_color = Color.white;
+    private intendant intendant;
 
     private float y_size = 0.005f;
 
     public Vector3[] verticles;
     public int[] triangles;
 
+    private Material province_material;
 
-    private List<Vector3> triangulation_result;
-    void Start()
+
+
+
+    public void Construct() // Executor
     {
-        triangulation triangulation = new triangulation();
-
-        Debug.Log("I`ve started");
-       
-        foreach(Vector3 verticle in verticles) { Debug.Log(verticle); }
-        Construct(verticles, triangles);
-    }
-
-    void Construct(Vector3[] verticles, int[] triangles)
-    {
+        
         int original_verticles_quantity = verticles.Length; int original_triangles_quantity = triangles.Length;
         List<Vector3> list_of_verticles = new List<Vector3>();
         List<int> list_of_triangles = new List<int>();
@@ -67,35 +65,55 @@ public class provincegen : MonoBehaviour
         }
 
         // Мэш-генерация
-        foreach (Vector3 dot in verticles) { Debug.Log(dot);} foreach (int dot in triangles) { Debug.Log(dot); }
+        // foreach (Vector3 dot in verticles) { Debug.Log(dot);} foreach (int dot in triangles) { Debug.Log(dot); }
         Mesh mesh = new Mesh();
         mesh.vertices = list_of_verticles.ToArray(); mesh.triangles = list_of_triangles.ToArray();
         MeshFilter meshfilter = gameObject.AddComponent<MeshFilter>();
         MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshfilter.mesh = mesh;
         meshRenderer.material = new Material(Shader.Find("Standard"));
-        Material province_material = meshRenderer.material;
+        province_material = meshRenderer.material;
 
-
-        // make color softer
-
-        float h, s, v;
-        Color.RGBToHSV(state_color, out h, out s, out v);
-        s = 0.5f; v = 1;
-        current_color = Color.HSVToRGB(h, s, v);
-
-        if (sea != 0) current_color = Color.white;
-
-
-        province_material.color = current_color;
+        // if (sea != 0) current_color = Color.white;
+        // ChangeColor(current_color)
+        // province_material.color = current_color;
         // First you want to use the API with multiple materials
         // where 3 should be the index you want to use...
-        var materials = GetComponent<Renderer>().materials;
-        materials[0].SetColor("_EmissionColor", current_color);
-        materials[0].EnableKeyword("_EMISSION");
+        // var materials = GetComponent<Renderer>().materials;
+        // materials[0].SetColor("_EmissionColor", current_color);
+        // materials[0].EnableKeyword("_EMISSION");
+    } // Executor
+
+
+
+    public void ChangeColor(Color new_color) // Executor
+    {
+        float h, s, v;
+        Color.RGBToHSV(new_color, out h, out s, out v);
+        s = 0.5f; v = 1f; new_color = Color.HSVToRGB(h, s, v);
+        Debug.Log(String.Format("provincegen {0}, {1}, {2}", h, s, v));
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        province_material = meshRenderer.materials[0];
+        province_material.color = new_color;
+        province_material.SetColor("_EmissionColor", new_color);
+        province_material.EnableKeyword("_EMISSION");
     }
 
-    Vector3 BottomDot(Vector3 original_dot)
+    public void SetState(GameObject new_state) { state = new_state; state_color = state.GetComponent<stategen>().state_color; } // Executor
+
+    public void AddConnection(int province_id) // Executor
+    {
+        connections.Add(GameObject.Find("province_" + Convert.ToString(province_id)));
+    }
+    void Start() // Manager
+    {
+        intendant = GameObject.Find("Intendant").GetComponent<intendant>();
+        intendant.AddProvince(gameObject);
+        // Construct(verticles, triangles);
+    } 
+
+
+    Vector3 BottomDot(Vector3 original_dot) // helper
     {
         return new Vector3(original_dot.x, original_dot.y - y_size, original_dot.z);
     }
