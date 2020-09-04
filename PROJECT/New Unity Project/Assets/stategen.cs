@@ -33,7 +33,10 @@ public class stategen : MonoBehaviour
     public Vector2 diplomacy_coords;
     public String state_name;
 
-    private intendant intendant; 
+    private intendant intendant;
+
+    public GameObject capital_province;
+    // public string flag_file_name;
     // Start is called before the first frame update
     void Start()
     {
@@ -62,7 +65,7 @@ public class stategen : MonoBehaviour
         GameObject province = GameObject.Find(province_object_name);
         list_of_provinces.Add(province);
         provincegen current_provincegen = province.GetComponent<provincegen>();
-        Debug.Log(String.Format("stategen {0}, {1}, {2}", state_color.r, state_color.g, state_color.b));
+        // Debug.Log(String.Format("stategen {0}, {1}, {2}", state_color.r, state_color.g, state_color.b));
         current_provincegen.ChangeColor(state_color);
         current_provincegen.SetState(gameObject);
     }

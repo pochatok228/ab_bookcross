@@ -72,7 +72,7 @@ def Construction(world):
 		tr_p = ", ".join(["{}, {}, {}".format(i[0], i[1], i[2]) for i in province_triangles])
 		tr_e = "};"
 		ta.append(tr_b + tr_p + tr_e)
-		capital_coords_unity = province.capital_coords.toUnityCoords();
+		capital_coords_unity = province.capital_coords.toUnityCoords(); capital_coords_unity.x *= -1;
 		ta.append("		province_{}_provincegen.capital_coords = new Vector3({}f , 0, {}f);".format(p_id, capital_coords_unity.x, capital_coords_unity.y))
 		try:
 			ta.append('        province_{}_provincegen.state_color = new Color({}, {}, {});'.format(p_id, province.state.color.r, province.state.color.g, province.state.color.b));
@@ -88,22 +88,23 @@ def Construction(world):
 		ta.append('        province_{}_provincegen.defensive_ability = {};'.format(p_id, province.defensive_ability))
 		for connection in province.connections:
 			ta.append('        province_{}_provincegen.AddConnection({});'.format(p_id, connection.get_id()));
-		ta.append("province_{}_provincegen.Construct();".format(p_id));
+		ta.append("        province_{}_provincegen.Construct();".format(p_id));
 		ta.append('');
 	for i in range(4): ta.append('');
 	for i in range(len(world.list_of_states)):
 		state = world.list_of_states[i]
 		s_id = state.get_id();
-		ta.append("        state_{} = Instantiate(state_template, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;".format(s_id))
+		ta.append("         state_{} = Instantiate(state_template, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;".format(s_id))
 		ta.append('			state_{}.name = "state_{}";'.format(s_id, s_id));
 		ta.append("			state_{}_stategen = state_{}.GetComponent<stategen>();".format(s_id, s_id))
 		ta.append('			state_{}_stategen.state_name = "{}";'.format(s_id, state.get_name()));
 		cr, cg, cb = state.color.r, state.color.g, state.color.b;
 		ta.append("			state_{}_stategen.state_color = new Color({}, {}, {});".format(s_id, cr, cg, cb));
-		ta.append("         state_{}_stategen.political_coords = new Vector2({}, {});".format(s_id, state.political_coords.x, state.political_coords.y));
-		ta.append("         state_{}_stategen.diplomacy_coords = new Vector2({}, {});".format(s_id, state.diplomacy_coords.x, state.diplomacy_coords.y));
+		ta.append("         state_{}_stategen.political_coords = new Vector2({}f, {}f);".format(s_id, state.political_coords.x, state.political_coords.y));
+		ta.append("         state_{}_stategen.diplomacy_coords = new Vector2({}f, {}f);".format(s_id, state.diplomacy_coords.x, state.diplomacy_coords.y));
 		for province in state.list_of_province:
-			ta.append("        state_{}_stategen.AddProvince({});".format(s_id, province.get_id()))
+			ta.append("         state_{}_stategen.AddProvince({});".format(s_id, province.get_id()))
+		ta.append('        state_{}_stategen.capital_province = GameObject.Find("province_{}");'.format(s_id, state.capital_province.get_id()));
 		ta.append('')
 		
 

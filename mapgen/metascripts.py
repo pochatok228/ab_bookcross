@@ -221,6 +221,7 @@ class State():
 		self.icon = pygame.sprite.Sprite();
 		self.icon.image = pygame.transform.scale(pygame.image.load(self.icon_file), (50, 50));
 		self.icon.rect = (375, 375, 50, 50);
+		self.capital_province : Province = None;
 
 
 
@@ -326,6 +327,8 @@ class World():
 # ============== Самое интересное ======
 		try:
 			with open(file_name, 'w') as file:
+
+				print(Construction(self))
 				file.write(Construction(self))
-		except Exception:
-			pass;
+		except Exception as e:
+			print(e)
