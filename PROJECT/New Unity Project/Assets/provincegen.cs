@@ -70,8 +70,17 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         }
         
     }
+
+    public void SetStateColor() { ChangeColor(state_color); }// manager
+    public void ShowArmyOnTextField() { SetTextFieldValue(Convert.ToString(army)); }
+
+
     public void OnPointerEnter(PointerEventData eventData) // Executor
     {
+        if (intendant.GetMode() == intendant.CHOISE_MODE)
+        {
+            intendant.Alert(province_name);
+        }
         finished_up = false;
         moveup = true;
         movedown = false;
@@ -79,12 +88,16 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public void OnPointerExit(PointerEventData eventData) // Executor
     {
         movedown = true;
+        intendant.AlertDefault();
     }
     public void OnPointerClick(PointerEventData eventdata) // Executor
     {
-        Debug.Log(String.Format("Province_name = {0}", gameObject.name));
-        string state_name = GetStateName();
-        Debug.Log(String.Format("State_name = {0}", state_name));
+        if (intendant.GetMode() == intendant.CHOISE_MODE)
+        { 
+            intendant.Alert(province_name);
+            intendant.ProtagonistState = state;
+            intendant.EnterPoliticalCoords();
+        }
     }
 
     public void Construct() // Executor
@@ -138,6 +151,15 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         // materials[0].EnableKeyword("_EMISSION");
     } // Executor
 
+    public void SetTextFieldValue(string Text) // Exectuor
+    {
+        GameObject text_field = GameObject.Find(String.Format("{0}/Capital/TextField", gameObject.name));
+        text_field.GetComponent<TMPro.TextMeshPro>().SetText(Text);
+        GameObject text_background = GameObject.Find(String.Format("{0}/Capital/TextField/TextBackground", gameObject.name));
+
+        TextBackgroundHeightUpdate upcomponent = text_background.GetComponent<TextBackgroundHeightUpdate>();
+        upcomponent.UpdateHeight(Text.Length);
+    }
     public void ChangeColor(Color new_color) // Executor
     {
         if (new_color != Color.white)

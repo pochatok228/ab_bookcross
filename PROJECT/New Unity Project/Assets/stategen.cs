@@ -31,9 +31,11 @@ public class stategen : MonoBehaviour
     public List<GameObject> list_of_provinces;
     public Vector2 political_coords;
     public Vector2 diplomacy_coords;
-    public String state_name;
-
+    public string state_name;
+    public string icon_file;
+    public Sprite flag;
     private intendant intendant;
+    public string state_description; 
 
     public GameObject capital_province;
     // public string flag_file_name;
@@ -50,6 +52,10 @@ public class stategen : MonoBehaviour
 
         intendant.AddState(gameObject);
 
+
+        //Debug.Log(icon_file);
+        flag = Resources.Load(icon_file) as Sprite;
+        //Debug.Log(flag);
         // 
     }
 

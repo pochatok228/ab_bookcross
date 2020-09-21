@@ -23,12 +23,7 @@ def triangulation_function(province):
 		triangle = triangles[i]
 		triangle_normal  = []
 		for triangle_verticle in triangle: 
-			try:
-				triangle_normal.append(verticles_copy.index(triangle_verticle));
-			except Exception as e:
-				Log.d(triangle_verticle)
-				Log.d(verticles_copy)
-				Log.d(e)
+			triangle_normal.append(verticles_copy.index(triangle_verticle));
 		triangles[i] = tuple(triangle_normal);
 	# Log.d(triangles)
 	return verticles_copy, triangles
@@ -51,7 +46,7 @@ def Construction(world):
 		ta.append("    private stategen state_{}_stategen;".format(i))
 
 	ta.append("")
-	ta.append("    void Start()")
+	ta.append("    void Awake()")
 	ta.append("    {")
 	for i in range(len(world.list_of_province)):
 		province = world.list_of_province[i];
@@ -73,7 +68,7 @@ def Construction(world):
 		tr_e = "};"
 		ta.append(tr_b + tr_p + tr_e)
 		capital_coords_unity = province.capital_coords.toUnityCoords(); capital_coords_unity.x *= -1;
-		ta.append("		province_{}_provincegen.capital_coords = new Vector3({}f , 0, {}f);".format(p_id, capital_coords_unity.x, capital_coords_unity.y))
+		ta.append("		province_{}_provincegen.capital_coords = new Vector3({}f , 0, {}f);".format(p_id, 10 + capital_coords_unity.x, capital_coords_unity.y))
 		try:
 			ta.append('        province_{}_provincegen.state_color = new Color({}, {}, {});'.format(p_id, province.state.color.r, province.state.color.g, province.state.color.b));
 		except Exception:
@@ -104,6 +99,9 @@ def Construction(world):
 		ta.append("         state_{}_stategen.diplomacy_coords = new Vector2({}f, {}f);".format(s_id, state.diplomacy_coords.x, state.diplomacy_coords.y));
 		for province in state.list_of_province:
 			ta.append("         state_{}_stategen.AddProvince({});".format(s_id, province.get_id()))
+		IconUnityName = '.'.join(state.icon_file.split('/')[-1].split('.')[:-1]);
+		ta.append('		   state_{}_stategen.icon_file = "{}";'.format(s_id, IconUnityName))
+		ta.append('		   state_{}_stategen.state_description = "";'.format(s_id));
 		ta.append('        state_{}_stategen.capital_province = GameObject.Find("province_{}");'.format(s_id, state.capital_province.get_id()));
 		ta.append('')
 		

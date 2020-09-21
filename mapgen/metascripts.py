@@ -325,10 +325,6 @@ class World():
 
 
 # ============== Самое интересное ======
-		try:
-			with open(file_name, 'w') as file:
-
-				print(Construction(self))
-				file.write(Construction(self))
-		except Exception as e:
-			print(e)
+		with open(file_name, 'w') as file:
+			print(Construction(self))
+			file.write(Construction(self)) 
