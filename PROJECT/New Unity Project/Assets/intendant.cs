@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
+using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class intendant : MonoBehaviour
 {
     private List<GameObject> list_of_provinces = new List<GameObject>();
     private List<GameObject> list_of_states = new List<GameObject>();
 
-    private int mode = 0;
+    public int mode = 0;
     public int CHOISE_MODE = 0;
     public int POLITICAL_MODE = 1;
 
     public GameObject ProtagonistState;
 
     public GameObject PoliticalCoordsMenuBackground;
+    public GameObject PauseMenu;
+
+    public string scene_name;
 
 
 
 
 
-    public void Step() // Intendant
+
+      public void Step() // Intendant
     {
         // here we call the determinators
 
@@ -34,6 +40,10 @@ public class intendant : MonoBehaviour
         UpdateMode();
         PoliticalCoordsMenuBackground = GameObject.Find("PoliticalCoordsMenuBackground");
         PoliticalCoordsMenuBackground.SetActive(false);
+        PauseMenu = GameObject.Find("PauseMenu");
+        PauseMenu.SetActive(false);
+
+        scene_name = SceneManager.GetActiveScene().name;
 
     }
 
@@ -63,7 +73,6 @@ public class intendant : MonoBehaviour
 
         
     }
-
     public void UpdateMode() // Manager
     {
         if (mode == CHOISE_MODE)
@@ -96,9 +105,28 @@ public class intendant : MonoBehaviour
         }
     }
     public void ChangeMode(int new_mode) { mode = new_mode; UpdateMode(); } // Manager
+    public void OpenAndClosePauseMenu() { PauseMenu.SetActive(!PauseMenu.activeSelf); }
+    public void SaveGame()
+    {
+        string path = EditorUtility.SaveFilePanel("Save game", "Assets/Saves", scene_name + ".es3", "es3");
+        ES3AutoSaveMgr.Current.settings.path = path;
+        ES3AutoSaveMgr.Current.Save();
 
+    }
 
+    public void LoadGame()
+    {
+        string path = EditorUtility.OpenFilePanel("Load game", "Assets/Saves", "es3");
+        ES3AutoSaveMgr.Current.settings.path = path;
+        ES3AutoSaveMgr.Current.Load();
 
+        foreach (GameObject province in GameObject.FindGameObjectsWithTag("Province"))
+        {
+            province.GetComponent<provincegen>().SetStateColor();
+        }
+        Debug.Log(mode);
+        UpdateMode();
+    }
     public void EnterPoliticalCoords()//Executor
     {
         PoliticalCoordsMenuBackground.SetActive(true);
@@ -135,13 +163,11 @@ public class intendant : MonoBehaviour
         GameObject InstructionField = GameObject.Find("InstructionField");
         InstructionField.GetComponent<TMPro.TextMeshProUGUI>().SetText(text);
     }
-
     public void AlertDefault() // Executor
     {
         GameObject InstructionField = GameObject.Find("InstructionField");
         if (mode == CHOISE_MODE) { InstructionField.GetComponent<TMPro.TextMeshProUGUI>().SetText("Choose any province that belongs to state you`re going to play for"); }
     }
-    
     public int GetMode() { return mode; } // Executor
     public void AddProvince(GameObject province) { list_of_provinces.Add(province); } // executor
     public void AddState(GameObject state) { list_of_states.Add(state); } // executor

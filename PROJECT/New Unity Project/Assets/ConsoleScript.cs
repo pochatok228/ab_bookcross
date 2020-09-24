@@ -38,7 +38,7 @@ public class ConsoleScript : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Input.GetKeyUp(KeyCode.KeypadEnter))
+        if (Input.GetKeyUp(KeyCode.Return))
         {
             GameObject text = GameObject.Find("ConsoleText");
             TMPro.TextMeshProUGUI text_mesh_pro = text.GetComponent<TMPro.TextMeshProUGUI>();

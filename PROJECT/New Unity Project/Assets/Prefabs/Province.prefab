@@ -111,6 +111,8 @@ GameObject:
   - component: {fileID: 9009694054749262749}
   - component: {fileID: 4906642326212221679}
   - component: {fileID: 1128308801286696824}
+  - component: {fileID: 114895606052879008}
+  - component: {fileID: 114521616082406600}
   m_Layer: 0
   m_Name: Province
   m_TagString: Province
@@ -192,6 +194,74 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &114895606052879008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372858023770920954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baff8732cd3074ef88b34f9cc487846d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabId: 4093086786605659657
+  localRefs:
+    _Keys:
+    - {fileID: 1372858023770920954}
+    - {fileID: 3654979811337879311}
+    - {fileID: 9009694054749262749}
+    - {fileID: 11500000, guid: 08d89a1a88c69714d885fa08fc7d025b, type: 3}
+    - {fileID: 4906642326212221679}
+    - {fileID: 1128308801286696824}
+    - {fileID: 114895606052879008}
+    - {fileID: 1729009433369043467}
+    - {fileID: 5732642290297023687}
+    - {fileID: 3130644858645423414}
+    - {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 4700180683192370841}
+    - {fileID: 2100000, guid: b1b9ddcb140b44d439f8ca2c59eecdc6, type: 2}
+    - {fileID: 8672150894760881762}
+    - {fileID: 3497191015755793047}
+    - {fileID: 3772830259416935629}
+    - {fileID: 5097383385441317396}
+    - {fileID: 21499683555440508, guid: 3d925ece8417efa4b89e376627aea565, type: 2}
+    - {fileID: 9209284350520900130}
+    - {fileID: 5085329776165230376}
+    - {fileID: 7659704156215084697}
+    - {fileID: 0}
+    - {fileID: 285352291034360131}
+    - {fileID: 5258379081127891903}
+    - {fileID: 2707290285048588203}
+    - {fileID: 2651994109118078298}
+    - {fileID: 5773175598655723401}
+    - {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
+    - {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+    - {fileID: 2805169893678974091}
+    - {fileID: 3635765620053411948}
+    - {fileID: 3765321822699071840}
+    - {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+    - {fileID: 2291696469386451377}
+    - {fileID: 2100000, guid: 5471c87da0f006647a9fcba585886138, type: 2}
+    - {fileID: 4240030967258933664}
+    - {fileID: 5910045912403211057}
+    - {fileID: 11500000, guid: 70c9f234daf485344b14b4ddc35f16bd, type: 3}
+    _Values: c9a55426b0d98a3dabeed61e4407701318de4b50074a1b20ef9ec1feb6d3dc28951095e609a1570b3e158b3be81deb71157300b8d190767e8b33164f9a88f32811ad8833728a0a4636568f1dd656082eb34f122ad495f92679ec8fc24858593809b32a3b95b7ff617f47837a0158a734d418fc1564e1037bb362ac5e19cd8e23fd56278a8043c304b04f57e4e78bd820bba4689faa906228505178cdf45fb84b29598255cfe24c185b035286bfcdf653ba4f3a2fcbf60f4f970c0d400e2def26a9b03c56355111374c48f73efdd24f3a20f0f1e0e3831b2d10154a45f5a34e684436e2ead43058683f027c14ee4d4d685d48211e3c0e4224960e664a9b572d56fa8f8134b43a0e1067775d1ff8f8c05e9e4c5dc13b935a340c42aa3936f233182adaf182307ee269a8cd794c939de372
+--- !u!114 &114521616082406600
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1372858023770920954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cfcc9ceea0bf419cb3bcaf548c2600d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saveChildren: 0
+  componentsToSave: []
 --- !u!1 &1729009433369043467
 GameObject:
   m_ObjectHideFlags: 0

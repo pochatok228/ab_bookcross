@@ -71,7 +71,17 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         
     }
 
-    public void SetStateColor() { ChangeColor(state_color); }// manager
+    public void SetStateColor()
+    {
+        try
+        {
+            Color state_color = state.GetComponent<stategen>().state_color;
+            ChangeColor(state_color);        }
+        catch(Exception)
+        {
+            ChangeColor(Color.white);
+        }
+    }
     public void ShowArmyOnTextField() { SetTextFieldValue(Convert.ToString(army)); }
 
 
@@ -98,6 +108,7 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             intendant.ProtagonistState = state;
             intendant.EnterPoliticalCoords();
         }
+        Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
     }
 
     public void Construct() // Executor

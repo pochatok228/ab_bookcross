@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4952199634824590439}
   - component: {fileID: 114458297002214472}
+  - component: {fileID: 114123819914577184}
+  - component: {fileID: 114719976614606434}
   m_Layer: 0
   m_Name: state
   m_TagString: Untagged
@@ -43,3 +45,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c76b5c14b4ec2e74dbbbad557513e1ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  state_color: {r: 0, g: 0, b: 0, a: 0}
+  list_of_provinces: []
+  political_coords: {x: 0, y: 0}
+  diplomacy_coords: {x: 0, y: 0}
+  state_name: 
+  icon_file: 
+  flag: {fileID: 0}
+  state_description: 
+  capital_province: {fileID: 0}
+--- !u!114 &114123819914577184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5946332337711199081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baff8732cd3074ef88b34f9cc487846d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabId: 4477862154294357906
+  localRefs:
+    _Keys:
+    - {fileID: 5946332337711199081}
+    - {fileID: 4952199634824590439}
+    - {fileID: 114458297002214472}
+    - {fileID: 11500000, guid: c76b5c14b4ec2e74dbbbad557513e1ca, type: 3}
+    - {fileID: 114123819914577184}
+    _Values: 5be72c43769dbf00417e614a0d7834343f9940e6c241a04f7b05cea654bdbc715ae1927c6916e029
+--- !u!114 &114719976614606434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5946332337711199081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cfcc9ceea0bf419cb3bcaf548c2600d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  saveChildren: 0
+  componentsToSave:
+  - {fileID: 114458297002214472}
