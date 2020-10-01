@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-using UnityEditor;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class intendant : MonoBehaviour
 {
@@ -167,9 +167,13 @@ public class intendant : MonoBehaviour
 
     }
 
+    public void OpenFile(string path)
+    {
+        ES3AutoSaveMgr.Current.settings.path = path;
+    }
     public void LoadGame()
     {
-        string path = EditorUtility.OpenFilePanel("Load game", "Assets/Saves", "es3");
+        string path = EditorUtility.OpenFilePanel("Save game", "Assets/Saves",  "es3");
         ES3AutoSaveMgr.Current.settings.path = path;
         ES3AutoSaveMgr.Current.Load();
 

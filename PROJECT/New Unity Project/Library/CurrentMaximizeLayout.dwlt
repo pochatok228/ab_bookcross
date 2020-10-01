@@ -24,7 +24,7 @@ MonoBehaviour:
   m_MinSize: {x: 509, y: 498}
   m_MaxSize: {x: 14004, y: 14048}
   vertical: 0
-  controlID: 35622
+  controlID: 1505
 --- !u!114 &2
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_MinSize: {x: 232, y: 498}
   m_MaxSize: {x: 10002, y: 14048}
   vertical: 1
-  controlID: 35600
+  controlID: 1506
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -191,9 +191,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 485.30676, y: 343.28763, z: -687.75}
+    m_Target: {x: 523.33057, y: 332.6724, z: -687.75}
     speed: 2
-    m_Value: {x: 485.30676, y: 343.28763, z: -687.75}
+    m_Value: {x: 523.33057, y: 332.6724, z: -687.75}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -225,9 +225,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 778.207
+    m_Target: 760.6069
     speed: 2
-    m_Value: 778.207
+    m_Value: 760.6069
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -262,8 +262,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 119
-    width: 1403
-    height: 797
+    width: 1352
+    height: 647
   m_PersistentViewDataDictionary: {fileID: 0}
 --- !u!114 &7
 MonoBehaviour:
@@ -395,21 +395,21 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs
+    - Assets
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\pochatok228\Desktop Folders\bswap\PROJECT\New Unity
     Project
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 259}
-    m_SelectedIDs: 662b0000
-    m_LastClickedID: 11110
-    m_ExpandedIDs: 00000000bc290000f02900002c2a00003e2a00008e2a0000dc2b0000282d000000ca9a3b
+    scrollPos: {x: 0, y: 79}
+    m_SelectedIDs: be290000
+    m_LastClickedID: 10686
+    m_ExpandedIDs: 00000000be290000f22900002e2a0000402a0000902a0000de2b00002a2d000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -437,7 +437,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000bc290000f02900002c2a00003e2a00008e2a0000dc2b0000282d000000ca9a3b
+    m_ExpandedIDs: 00000000be290000f22900002e2a0000402a0000902a0000de2b00002a2d000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -462,9 +462,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: 1e2f0000
-    m_LastClickedInstanceID: 12062
-    m_HadKeyboardFocusLastEvent: 1
+    m_SelectedInstanceIDs: 44260000
+    m_LastClickedInstanceID: 9796
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: c6230000542a0000c22400000c340000283400008849000086290000cc33000094280000202e000064360000f42a00002437000052b5ffff142a00009c0c0000c40c0000000f0000ac2b0000cc290000222a000046290000ea790000fc790000a02bfffff4790000107a0000527b0000d2faffff000000003a2a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -489,7 +489,7 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
     m_NewAssetIndexInList: -1
-    m_ScrollPosition: {x: 0, y: 0}
+    m_ScrollPosition: {x: 0, y: 83}
     m_GridSize: 64
   m_DirectoriesAreaWidth: 382
 --- !u!114 &10
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_MinSize: {x: 277, y: 298}
   m_MaxSize: {x: 4002, y: 8048}
   vertical: 1
-  controlID: 35623
+  controlID: 1467
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -687,10 +687,10 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 741}
+      scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: f25ffffff45ffffffa5ffffffe5fffffb263ffffb463ffffb863ffffba63ffffbe63ffff208effff228effff268effff288effff2c8effff7e90ffff8490ffff8890ffff8c90ffff9c91ffff9e91ffffa491ffffa891ffff9294ffff9894ffff92dbffff9edbffffaadbffff02ddffff1addffffb6e6ffff9ce8ffffdefbffff562e0000ba2e0000042f00005e2f0000a62f0000ce2f0000e82f0000263000005e300000
+      m_ExpandedIDs: defbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
