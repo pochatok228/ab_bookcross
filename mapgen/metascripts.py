@@ -44,6 +44,8 @@ color_dict = {
 	SEA_MODE : pygame.Color(213, 113, 0),
 	DEFENSIVE_ABILITY_MODE : pygame.Color(200, 175, 251)
 };
+
+
 class Province():
 
 	def __init__(self) -> None:
