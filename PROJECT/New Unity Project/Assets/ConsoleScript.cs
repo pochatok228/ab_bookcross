@@ -23,7 +23,7 @@ public class ConsoleScript : MonoBehaviour
 
     void ConsoleManager(string command) // manager
     {
-        Debug.Log(command);
+        Debug.LogError(command);
         if (command.Contains("capture"))
         {
             string[] args = command.Split('(')[1].Split(')')[0].Split(',');
@@ -33,6 +33,24 @@ public class ConsoleScript : MonoBehaviour
         {
             string[] args = command.Split('(')[1].Split(')')[0].Split(',');
             intendant.ChangeMode(Convert.ToInt32(args[0]));
+        }
+        else if (command.Contains("ecinfo"))
+        {
+            try
+            {
+                stategen state = intendant.ProtagonistState.GetComponent<stategen>();
+                Debug.LogError("Economic info");
+                Debug.LogError(String.Format("Foreign Trade is {0}", state.ForeignTrade));
+                Debug.LogError(String.Format("Investments is {0}", state.Investments));
+                Debug.LogError(String.Format("Foreign Trade is {0}", state.Researches));
+                Debug.LogError(String.Format("Army is {0}", state.Army));
+                Debug.LogError(String.Format("CivTax is {0}", state.CivilianTax));
+                Debug.LogError(String.Format("ProdTax is {0}", state.ProductionTax));
+            }
+            catch(Exception)
+            {
+                Debug.LogError("Error occured");
+            }
         }
     }
 

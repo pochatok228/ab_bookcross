@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 
@@ -35,7 +36,19 @@ public class stategen : MonoBehaviour
     public string icon_file;
     public Sprite flag;
     private intendant intendant;
-    public string state_description; 
+    public string state_description;
+
+    private int Balance = 1000;
+    private int totalIncomePopulation;
+    private int totalIncomeProduction;
+    private int totalOutcomeArmy;
+    
+    public float ForeignTrade = 0.1f;
+    public float Investments = 0.1f;
+    public float Researches = 0.1f;
+    public float Army = 0.1f;
+    public double CivilianTax = 0.18f;
+    public double ProductionTax = 0.13f;
 
     public GameObject capital_province;
     // public string flag_file_name;
@@ -56,15 +69,57 @@ public class stategen : MonoBehaviour
         //Debug.Log(icon_file);
         flag = Resources.Load(icon_file) as Sprite;
         //Debug.Log(flag);
-        // 
+        UpdateEconomicInfo();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+    }
+    private void UpdateEconomicInfo()
+    {
+        totalIncomePopulation = 0;
+        totalIncomeProduction = 0;
+        totalOutcomeArmy = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            provincegen province_manager = province.GetComponent<provincegen>();
+            totalIncomeProduction += province_manager.productions;
+            totalIncomePopulation += province_manager.population;
+            totalOutcomeArmy += province_manager.army;
+            
+        }
     }
 
+    public void ImportEconomicSlidersData()
+    {
+        CivilianTax = intendant.civslider.value;
+        ProductionTax = intendant.prodslider.value;
+        ForeignTrade = intendant.ftslider.value;
+        Investments = intendant.invslider.value;
+        Researches = intendant.invslider.value;
+        Debug.Log(CivilianTax);
+
+        double income = totalIncomeProduction * CivilianTax + totalIncomePopulation * ProductionTax;
+        Army = totalOutcomeArmy / (float)(income);
+        intendant.armyslider.GetComponent<Slider>().value = Army;
+        double totalOutcomeFT = income * ForeignTrade;
+        double totalOutcomeInv = income * Investments;
+        double totalOutcomeRes = income * Researches;
+
+        int surplus = Convert.ToInt32(income - totalOutcomeFT - totalOutcomeInv - totalOutcomeRes - totalOutcomeArmy);
+        if (surplus > 0)
+        {
+            string Info = String.Format("Current budget proficit is {0}", surplus);
+            intendant.Alert(Info);
+        }
+        else
+        {
+            string Info = String.Format("Current budget deficit is {0}", -1 * surplus);
+            intendant.Alert(Info);
+        }
+        
+    }
     public void AddProvince(int province_id) // manager
     {
         string province_object_name = "province_" + Convert.ToString(province_id);

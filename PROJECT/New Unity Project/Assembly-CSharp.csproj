@@ -66,6 +66,7 @@
     <Compile Include="Assets\consequentor.cs" />
     <Compile Include="Assets\ConsoleOppening.cs" />
     <Compile Include="Assets\ConsoleScript.cs" />
+    <Compile Include="Assets\GameModesManager.cs" />
     <Compile Include="Assets\intendant.cs" />
     <Compile Include="Assets\loadbuttonscript.cs" />
     <Compile Include="Assets\mapgen.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="Assets\Scripts\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\CameraZoom.cs" />
     <Compile Include="Assets\ShadedWireframe.cs" />
+    <Compile Include="Assets\SliderScript.cs" />
     <Compile Include="Assets\stategen.cs" />
     <Compile Include="Assets\TextBackgroundHeightUpdate.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />

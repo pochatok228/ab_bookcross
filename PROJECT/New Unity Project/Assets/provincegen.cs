@@ -107,6 +107,10 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             intendant.Alert(province_name);
             intendant.ProtagonistState = state;
             intendant.EnterPoliticalCoords();
+            foreach(GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+            {
+                slider.GetComponent<SliderScript>().setState(state);
+            }
         }
         Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
     }
@@ -180,6 +184,15 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             s = 0.5f; v = 1f; new_color = Color.HSVToRGB(h, s, v);
             // Debug.Log(String.Format("provincegen {0}, {1}, {2}", h, s, v));
         }
+        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        province_material = meshRenderer.materials[0];
+        province_material.color = new_color;
+        province_material.SetColor("_EmissionColor", new_color);
+        province_material.EnableKeyword("_EMISSION");
+    }
+
+    public void SetStrictColor(Color new_color)
+    {
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
         province_material = meshRenderer.materials[0];
         province_material.color = new_color;

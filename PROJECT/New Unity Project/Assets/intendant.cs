@@ -14,20 +14,34 @@ public class intendant : MonoBehaviour
     public int mode = 0;
     public int CHOISE_MODE = 0;
     public int POLITICAL_MODE = 1;
+    public int ECONOMICAL_MODE = 2;
 
     public GameObject ProtagonistState;
 
     public GameObject PoliticalCoordsMenuBackground;
     public GameObject PauseMenu;
+    public GameObject GameModeMenu;
+    public GameObject EconomicMenu;
+    public GameObject ConsoleInput;
+
 
     public string scene_name;
 
+    public Color EconomicModeMinColor;
+    public Color EconomicModeMaxColor;
+
+    
+    public Slider ftslider;
+    public Slider invslider;
+    public Slider resslider;
+    public Slider armyslider;
+    public Slider civslider;
+    public Slider prodslider;
 
 
 
 
-
-      public void Step() // Intendant
+    public void Step() // Intendant
     {
         // here we call the determinators
 
@@ -42,8 +56,15 @@ public class intendant : MonoBehaviour
         PoliticalCoordsMenuBackground.SetActive(false);
         PauseMenu = GameObject.Find("PauseMenu");
         PauseMenu.SetActive(false);
-
+        ConsoleInput = GameObject.Find("Console");
+        ConsoleInput.SetActive(false);
+        GameModeMenu = GameObject.Find("GameModeMenu");
+        EconomicMenu = GameObject.Find("Economic Menu");
+        EconomicMenu.SetActive(false);
         scene_name = SceneManager.GetActiveScene().name;
+
+        EconomicModeMinColor = new Color(189, 255, 220);
+        EconomicModeMaxColor = new Color(0, 255, 211);
 
     }
 
@@ -97,15 +118,47 @@ public class intendant : MonoBehaviour
         }
         if (mode == POLITICAL_MODE)
         {
+            AlertDefault();
             GameObject[] provinces = GameObject.FindGameObjectsWithTag("Province");
             foreach (GameObject province in provinces){
                 province.GetComponent<provincegen>().SetStateColor();
                 province.GetComponent<provincegen>().ShowArmyOnTextField();
             }
         }
+        if (mode == ECONOMICAL_MODE)
+        {
+
+            GameObject[] provinces = GameObject.FindGameObjectsWithTag("Province");
+            float minimum_value = 100000000, maximum_value = 0;
+            foreach(GameObject province in provinces)
+            {
+                provincegen current_provincegen = province.GetComponent<provincegen>();
+                float GDP = current_provincegen.productions / current_provincegen.population;
+                if (GDP < minimum_value) minimum_value = GDP;
+                if (GDP > maximum_value) maximum_value = GDP;
+            }
+            foreach (GameObject province in provinces)
+            {
+                provincegen current_provincegen = province.GetComponent<provincegen>();
+                if (current_provincegen.state != ProtagonistState)
+                {
+                    current_provincegen.SetStrictColor(Color.white);
+                }
+                else
+                {
+                    float GPD = current_provincegen.productions / current_provincegen.population;
+                    float percentage = (GPD - minimum_value) / (maximum_value - minimum_value);
+                    current_provincegen.ChangeColor(EconomicModeMinColor + (EconomicModeMaxColor - EconomicModeMinColor) * percentage);
+                }
+            }
+
+        }
     }
     public void ChangeMode(int new_mode) { mode = new_mode; UpdateMode(); } // Manager
-    public void OpenAndClosePauseMenu() { PauseMenu.SetActive(!PauseMenu.activeSelf); }
+    public void OpenAndClosePauseMenu() {
+        if (PauseMenu.activeSelf) PauseMenu.SetActive(false);
+        else OpenMenu(PauseMenu);
+    }
     public void SaveGame()
     {
         string path = EditorUtility.SaveFilePanel("Save game", "Assets/Saves", scene_name + ".es3", "es3");
@@ -147,7 +200,13 @@ public class intendant : MonoBehaviour
         Vector2 unformed_political_position = mousePosition - centerPosition;
         
         ProtagonistState.GetComponent<stategen>().political_coords = new Vector2(unformed_political_position.x / 20, unformed_political_position.y / 20);
-        Alert(String.Format("{0},           {1}", ProtagonistState.GetComponent<stategen>().political_coords.x, ProtagonistState.GetComponent<stategen>().political_coords.y));
+        float x = ProtagonistState.GetComponent<stategen>().political_coords.x;
+        float y = ProtagonistState.GetComponent<stategen>().political_coords.y;
+        string xk, yk;
+        if (x >= 0) xk = "R"; else xk = "L";
+        if (y >= 0) yk = "A"; else yk = "L";
+
+        Alert(String.Format("{0}{1}. {2}{3}", x, xk, y, yk));
     }
     public void EnterPoliticalCoordsOK()
     {
@@ -158,6 +217,8 @@ public class intendant : MonoBehaviour
     {
         PoliticalCoordsMenuBackground.SetActive(false);
     }
+
+    public void ImportEconomicSlidersDataToProtagonistState() { ProtagonistState.GetComponent<stategen>().ImportEconomicSlidersData(); }
     public void Alert(String text) // Executor
     {
         GameObject InstructionField = GameObject.Find("InstructionField");
@@ -168,7 +229,18 @@ public class intendant : MonoBehaviour
         GameObject InstructionField = GameObject.Find("InstructionField");
         if (mode == CHOISE_MODE) { InstructionField.GetComponent<TMPro.TextMeshProUGUI>().SetText("Choose any province that belongs to state you`re going to play for"); }
     }
+    public void SetMode(int new_mode) { mode = new_mode; UpdateMode(); }
     public int GetMode() { return mode; } // Executor
     public void AddProvince(GameObject province) { list_of_provinces.Add(province); } // executor
     public void AddState(GameObject state) { list_of_states.Add(state); } // executor
+
+    public void OpenMenu(GameObject menu)
+    {
+        foreach(GameObject i in GameObject.FindGameObjectsWithTag("Menu"))
+        {
+            i.SetActive(false);
+        }
+        menu.SetActive(true);
+    }
+
 }

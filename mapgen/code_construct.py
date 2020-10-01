@@ -73,6 +73,7 @@ def Construction(world):
 			ta.append('        province_{}_provincegen.state_color = new Color({}, {}, {});'.format(p_id, province.state.color.r, province.state.color.g, province.state.color.b));
 		except Exception:
 			ta.append('        province_{}_provincegen.state_color = new Color(255, 255, 255);'.format(i));
+		ta.append('        province_{}_provincegen.population = {};'.format(p_id, province.productions))
 		ta.append('        province_{}_provincegen.productions = {};'.format(p_id, province.productions))
 		ta.append('        province_{}_provincegen.education = {};'.format(p_id, province.education))
 		ta.append('        province_{}_provincegen.army= {};'.format(p_id, province.army))
