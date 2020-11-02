@@ -28,12 +28,19 @@ public class GameModesManager : MonoBehaviour
             bool onview = GameModeMenu.activeSelf;
             if (onview) GameModeMenu.SetActive(false);
             else intendant.OpenMenu(GameModeMenu);
+            try
+            {
+                intendant.selected_province.GetComponent<provincegen>().selected = false;
+                intendant.selected_province = null;
+            }
+            catch (Exception) { }
         }
     }
 
-    public void SetPoliticalMode() {intendant.SetMode(intendant.POLITICAL_MODE);}
+    public void SetPoliticalMode() {intendant.SetMode(intendant.POLITICAL_MODE); GameModeMenu.SetActive(false); }
     public void SetEconomicalMode() {
-        intendant.ImportEconomicSlidersDataToProtagonistState();
+        // intendant.ImportEconomicSlidersDataToProtagonistState();
+        
         intendant.SetMode(intendant.ECONOMICAL_MODE);
         intendant.OpenMenu(intendant.EconomicMenu);
         foreach (GameObject province in GameObject.FindGameObjectsWithTag("Province"))
@@ -50,5 +57,18 @@ public class GameModesManager : MonoBehaviour
                 prg.SetTextFieldValue("???");
             }
         }
+    }
+
+    public void SetArmyMode()
+    {
+        intendant.SetMode(intendant.ARMY_MODE);
+        intendant.AlertDefault();
+    }
+
+    public void SetConstructionMode()
+    {
+        intendant.SetMode(intendant.CONSTRUCION_MODE);
+        intendant.AlertDefault();
+        GameModeMenu.SetActive(false);
     }
 }

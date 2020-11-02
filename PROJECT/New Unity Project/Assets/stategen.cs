@@ -16,13 +16,13 @@ using UnityEngine.UI;
 //      5. Intendant    -> Gamesystem function that gets result from all alive determinators and player and launches the simulator
 
 
-    /*              Step Cycle
-     *                                       -> Determinator1(Situation) -> Result ->                                  Manager1(); -> Executor1(); Executor2();
-     *                                                                                                                                Executor3();
-     *  Start Step ->  Intendant(Situation) {--> Player Desicions -> Result        -> } -> Consequentor(Result[]) -> { Manager2(); -> Executor2(); Executor4(); } -> Next Step
-     * 
-                                             -> Determinator2(Situation) -> Result ->                                  Manager3(); -> Executor0();
-     */
+/*              Step Cycle
+ *                                       -> Determinator1(Situation) -> Result ->                                  Manager1(); -> Executor1(); Executor2();
+ *                                                                                                                                Executor3();
+ *  Start Step ->  Intendant(Situation) {--> Player Desicions -> Result        -> } -> Consequentor(Result[]) -> { Manager2(); -> Executor2(); Executor4(); } -> Next Step
+ * 
+                                         -> Determinator2(Situation) -> Result ->                                  Manager3(); -> Executor0();
+ */
 
 
 
@@ -38,17 +38,21 @@ public class stategen : MonoBehaviour
     private intendant intendant;
     public string state_description;
 
-    private int Balance = 1000;
+    public int Balance = 1000;
     private int totalIncomePopulation;
     private int totalIncomeProduction;
     private int totalOutcomeArmy;
-    
+
     public float ForeignTrade = 0.1f;
     public float Investments = 0.1f;
     public float Researches = 0.1f;
     public float Army = 0.1f;
-    public double CivilianTax = 0.18f;
-    public double ProductionTax = 0.13f;
+    public float CivilianTax = 0.18f;
+    public float ProductionTax = 0.13f;
+
+
+    public int population;
+    public int productions;
 
     public GameObject capital_province;
     // public string flag_file_name;
@@ -78,48 +82,69 @@ public class stategen : MonoBehaviour
     }
     private void UpdateEconomicInfo()
     {
-        totalIncomePopulation = 0;
-        totalIncomeProduction = 0;
-        totalOutcomeArmy = 0;
-        foreach (GameObject province in list_of_provinces)
-        {
-            provincegen province_manager = province.GetComponent<provincegen>();
-            totalIncomeProduction += province_manager.productions;
-            totalIncomePopulation += province_manager.population;
-            totalOutcomeArmy += province_manager.army;
-            
-        }
+
     }
 
+    public void ExportEconomicSlidersData()
+    {
+        // Изменяем позиции слайдеров, вызываем при открытии эк мода
+        intendant.civslider.value = CivilianTax;
+        intendant.prodslider.value = ProductionTax;
+        intendant.ftslider.value = ForeignTrade;
+        intendant.invslider.value = Investments;
+        intendant.resslider.value = Researches;
+
+    }
     public void ImportEconomicSlidersData()
     {
         CivilianTax = intendant.civslider.value;
         ProductionTax = intendant.prodslider.value;
         ForeignTrade = intendant.ftslider.value;
         Investments = intendant.invslider.value;
-        Researches = intendant.invslider.value;
+        Researches = intendant.resslider.value;
         Debug.Log(CivilianTax);
-
-        double income = totalIncomeProduction * CivilianTax + totalIncomePopulation * ProductionTax;
-        Army = totalOutcomeArmy / (float)(income);
-        intendant.armyslider.GetComponent<Slider>().value = Army;
-        double totalOutcomeFT = income * ForeignTrade;
-        double totalOutcomeInv = income * Investments;
-        double totalOutcomeRes = income * Researches;
-
-        int surplus = Convert.ToInt32(income - totalOutcomeFT - totalOutcomeInv - totalOutcomeRes - totalOutcomeArmy);
-        if (surplus > 0)
-        {
-            string Info = String.Format("Current budget proficit is {0}", surplus);
-            intendant.Alert(Info);
-        }
-        else
-        {
-            string Info = String.Format("Current budget deficit is {0}", -1 * surplus);
-            intendant.Alert(Info);
-        }
-        
     }
+    public void RestructBudget()
+    {
+        ImportEconomicSlidersData();
+        int income = GetCivilianTax() + GetProductionTax();
+        int army_outcome = GetArmyOutcome();
+        float ArmyOutcomePercentage = (float)army_outcome / (float)income;
+        intendant.armyslider.value = ArmyOutcomePercentage;
+    }
+    public int GetCivilianTax()
+    {
+        int civilian_tax = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            civilian_tax += province.GetComponent<provincegen>().GetCivilianTax();
+        }
+        totalIncomePopulation = civilian_tax;
+        return civilian_tax;
+    }
+    public int GetProductionTax()
+    {
+        int production_tax = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            production_tax += province.GetComponent<provincegen>().GetProductionTax();
+        }
+        totalIncomeProduction = production_tax;
+        return production_tax;
+    }
+
+    public int GetArmyOutcome()
+    {
+        int army_outcome = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            army_outcome += province.GetComponent<provincegen>().GetProductionTax();
+        }
+        totalOutcomeArmy = army_outcome;
+        return army_outcome;
+    }
+
+
     public void AddProvince(int province_id) // manager
     {
         string province_object_name = "province_" + Convert.ToString(province_id);
@@ -133,6 +158,13 @@ public class stategen : MonoBehaviour
 
     public void CalculateCharacteristics()
     {
-        
+        population = 0; productions = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            provincegen current_provincegen = province.GetComponent<provincegen>();
+            population += current_provincegen.population;
+            productions += current_provincegen.productions;
+        }
     }
+    
 }

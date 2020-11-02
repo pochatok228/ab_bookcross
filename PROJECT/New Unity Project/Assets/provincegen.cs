@@ -36,9 +36,15 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
     private Material province_material;
     private bool moveup; private bool movedown; private bool finished_up;
+    public bool selected;
     private GameObject capital;
 
- 
+    public int Libraries = 0;
+    public int Farms = 0;
+    public int Factories = 0;
+    public int Fortresses = 0;
+
+
 
     void Start() // Manager
     {
@@ -64,11 +70,10 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
             finished_up = true;
         }
         
-        if (movedown && gameObject.transform.position.y > 0 && finished_up)
+        if (movedown && gameObject.transform.position.y > 0 && finished_up && !selected)
         {
             gameObject.transform.position += new Vector3(0, -0.1f, 0);
         }
-        
     }
 
     public void SetStateColor()
@@ -103,18 +108,25 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public void OnPointerClick(PointerEventData eventdata) // Executor
     {
         if (intendant.GetMode() == intendant.CHOISE_MODE)
-        { 
+        {
             intendant.Alert(province_name);
             intendant.ProtagonistState = state;
             intendant.EnterPoliticalCoords();
-            foreach(GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+            foreach (GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
             {
                 slider.GetComponent<SliderScript>().setState(state);
             }
         }
+        else if (intendant.GetMode() == intendant.CONSTRUCION_MODE  && state == intendant.ProtagonistState)
+        {
+            intendant.OpenMenu(intendant.ConstructionMenu);
+            intendant.SelectProvince(gameObject);
+            
+
+        }
+
         Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
     }
-
     public void Construct() // Executor
     {
         
@@ -218,6 +230,18 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         connections.Add(GameObject.Find("province_" + Convert.ToString(province_id)));
     }
 
+    public int GetConstructionsQuantity(){return Libraries + Factories + Farms + Fortresses;}
+
+
+    public int GetCivilianTax()
+    {
+        return (int)(population * intendant.ProtagonistState.GetComponent<stategen>().CivilianTax * (1 + (float)education / 100f) * (1 + climate / 100));
+    }
+    
+    public int GetProductionTax()
+    {
+        return (int)(productions * intendant.ProtagonistState.GetComponent<stategen>().ProductionTax * (1 + (float)education / 100f) * (1 + (float)natural_resources / 100f));
+    }
 
     Vector3 BottomDot(Vector3 original_dot) // helper
     {
