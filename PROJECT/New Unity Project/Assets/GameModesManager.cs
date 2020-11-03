@@ -63,6 +63,7 @@ public class GameModesManager : MonoBehaviour
     {
         intendant.SetMode(intendant.ARMY_MODE);
         intendant.AlertDefault();
+        GameModeMenu.SetActive(false);
     }
 
     public void SetConstructionMode()

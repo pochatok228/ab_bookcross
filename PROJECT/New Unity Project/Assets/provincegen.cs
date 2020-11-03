@@ -109,23 +109,35 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     {
         if (intendant.GetMode() == intendant.CHOISE_MODE)
         {
-            intendant.Alert(province_name);
-            intendant.ProtagonistState = state;
-            intendant.EnterPoliticalCoords();
-            foreach (GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+            try
             {
-                slider.GetComponent<SliderScript>().setState(state);
+                intendant.Alert(province_name);
+                intendant.ProtagonistState = state;
+                intendant.EnterPoliticalCoords();
+                foreach (GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+                {
+                    slider.GetComponent<SliderScript>().setState(state);
+                }
+            }
+            catch (Exception)
+            {
+                intendant.Alert("It is neutral province");
+                intendant.EnterPoliticalCoordsCancel();
             }
         }
         else if (intendant.GetMode() == intendant.CONSTRUCION_MODE  && state == intendant.ProtagonistState)
         {
-            intendant.OpenMenu(intendant.ConstructionMenu);
             intendant.SelectProvince(gameObject);
+            intendant.OpenMenu(intendant.ConstructionMenu);
             
-
+        }
+        else if (intendant.GetMode() == intendant.ARMY_MODE && state == intendant.ProtagonistState)
+        {
+            intendant.SelectProvince(gameObject);
+            intendant.OpenMenu(intendant.ArmyMenu);
         }
 
-        Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
+        // Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
     }
     public void Construct() // Executor
     {
@@ -232,7 +244,7 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
     public int GetConstructionsQuantity(){return Libraries + Factories + Farms + Fortresses;}
 
-
+    // вписать сюда сепаратизм 
     public int GetCivilianTax()
     {
         return (int)(population * intendant.ProtagonistState.GetComponent<stategen>().CivilianTax * (1 + (float)education / 100f) * (1 + climate / 100));

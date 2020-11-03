@@ -30,8 +30,10 @@ public class intendant : MonoBehaviour
     public GameObject EconomicMenu;
     public GameObject ConsoleInput;
     public GameObject ConstructionMenu;
+    public GameObject ArmyMenu;
 
-    public GameObject ConstructionManager;    
+    public GameObject ConstructionManager;
+    public ArmyManager Armymanager;
 
     public string scene_name;
 
@@ -69,6 +71,10 @@ public class intendant : MonoBehaviour
         EconomicMenu.SetActive(false);
         ConstructionMenu = GameObject.Find("ConstructionMenu");
         ConstructionMenu.SetActive(false);
+        ArmyMenu = GameObject.Find("ArmyMenu");
+        ArmyMenu.SetActive(false);
+
+        Armymanager = ArmyMenu.GetComponent<ArmyManager>();
 
         scene_name = SceneManager.GetActiveScene().name;
 
@@ -116,8 +122,16 @@ public class intendant : MonoBehaviour
 
         }
         selected_province = province;
+        Debug.Log(selected_province);
         selected_province.GetComponent<provincegen>().selected = true;
-        ConstructionManager.GetComponent<ConstructionManager>().UpdateMenuText();
+        if (mode == CONSTRUCION_MODE)
+        {
+            ConstructionManager.GetComponent<ConstructionManager>().UpdateMenuText();
+        }
+        else if (mode == ARMY_MODE)
+        {
+            Armymanager.UpdateInfo();
+        }
     }
 
     public void UpdateMode() // Manager
@@ -148,7 +162,7 @@ public class intendant : MonoBehaviour
             GameObject[] provinces = GameObject.FindGameObjectsWithTag("Province");
             foreach (GameObject province in provinces){
                 province.GetComponent<provincegen>().SetStateColor();
-                province.GetComponent<provincegen>().ShowArmyOnTextField();
+                province.GetComponent<provincegen>().SetTextFieldValue(String.Format("{0}", province.GetComponent<provincegen>().population));
             }
         }
         else if (mode == ECONOMICAL_MODE)
@@ -379,7 +393,7 @@ public class intendant : MonoBehaviour
 
     public void UpdateBalance()
     {
-        try { GameObject.Find("Balance/Text").GetComponent<TMPro.TextMeshProUGUI>().text = String.Format("Balance {0}", ProtagonistState.GetComponent<stategen>().Balance); } 
+        try { GameObject.Find("Balance/Text").GetComponent<TMPro.TextMeshProUGUI>().text = String.Format("Balance {0}MP", ProtagonistState.GetComponent<stategen>().Balance); } 
         catch { GameObject.Find("Balance/Text").GetComponent<TMPro.TextMeshProUGUI>().text = "Choose state"; }
     }
 
