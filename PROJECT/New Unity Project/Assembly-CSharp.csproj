@@ -68,6 +68,8 @@
     <Compile Include="Assets\ConsoleOppening.cs" />
     <Compile Include="Assets\ConsoleScript.cs" />
     <Compile Include="Assets\ConstructionManager.cs" />
+    <Compile Include="Assets\Determinator.cs" />
+    <Compile Include="Assets\DiplomacyManager.cs" />
     <Compile Include="Assets\GameModesManager.cs" />
     <Compile Include="Assets\intendant.cs" />
     <Compile Include="Assets\loadbuttonscript.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Assets\provincegen.cs" />
     <Compile Include="Assets\Scripts\CameraMovement.cs" />
     <Compile Include="Assets\Scripts\CameraZoom.cs" />
+    <Compile Include="Assets\SeparatismManager.cs" />
     <Compile Include="Assets\ShadedWireframe.cs" />
     <Compile Include="Assets\SliderScript.cs" />
     <Compile Include="Assets\stategen.cs" />

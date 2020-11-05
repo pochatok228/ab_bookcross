@@ -27,7 +27,7 @@ public class ConsoleScript : MonoBehaviour
         if (command.Contains("capture"))
         {
             string[] args = command.Split('(')[1].Split(')')[0].Split(',');
-            intendant.CaptureProvince(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
+            // intendant.CaptureProvince(Convert.ToInt32(args[0]), Convert.ToInt32(args[1]));
         }
         else if (command.Contains("changemode"))
         {
@@ -51,6 +51,12 @@ public class ConsoleScript : MonoBehaviour
             {
                 Debug.LogError("Error occured");
             }
+        }
+
+        else if (command.Contains("givemoney"))
+        {
+            intendant.ProtagonistState.GetComponent<stategen>().Balance += 1000;
+            intendant.UpdateBalance();
         }
     }
 

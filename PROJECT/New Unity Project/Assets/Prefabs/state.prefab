@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 114458297002214472}
   - component: {fileID: 114123819914577184}
   - component: {fileID: 114719976614606434}
+  - component: {fileID: 4553763212327171915}
   m_Layer: 0
   m_Name: state
   m_TagString: Untagged
@@ -53,6 +54,19 @@ MonoBehaviour:
   icon_file: 
   flag: {fileID: 0}
   state_description: 
+  selected: 0
+  Allies: []
+  Enemyes: []
+  Balance: 200
+  proficite: 0
+  ForeignTrade: 0.1
+  Investments: 0.1
+  Researches: 0.1
+  Army: 0.1
+  CivilianTax: 0.18
+  ProductionTax: 0.13
+  population: 0
+  productions: 0
   capital_province: {fileID: 0}
 --- !u!114 &114123819914577184
 MonoBehaviour:
@@ -74,7 +88,9 @@ MonoBehaviour:
     - {fileID: 114458297002214472}
     - {fileID: 11500000, guid: c76b5c14b4ec2e74dbbbad557513e1ca, type: 3}
     - {fileID: 114123819914577184}
-    _Values: 5be72c43769dbf00417e614a0d7834343f9940e6c241a04f7b05cea654bdbc715ae1927c6916e029
+    - {fileID: 4553763212327171915}
+    - {fileID: 11500000, guid: dd85e7b0e902a0a48ace448c16617c07, type: 3}
+    _Values: 16c85b5c1be6677f5ec2ffdb0b34d319c3b32ea5cf032b25b2da07711f58e723c94a2ba865be13432034292d89fbe30c92ea6bf7fa18b012
 --- !u!114 &114719976614606434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,3 +106,15 @@ MonoBehaviour:
   saveChildren: 0
   componentsToSave:
   - {fileID: 114458297002214472}
+--- !u!114 &4553763212327171915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5946332337711199081}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd85e7b0e902a0a48ace448c16617c07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

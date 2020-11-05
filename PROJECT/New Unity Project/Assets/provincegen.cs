@@ -22,7 +22,7 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     public int sea;
     public int defensive_ability;
     public GameObject state;
-    public List<GameObject> connections = new List<GameObject>();
+    public List<int> connections = new List<int>();
     public Vector3 capital_coords;
 
     public Color state_color;
@@ -54,6 +54,10 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         GameObject province_capital = GameObject.Find(String.Format("{0}/Capital", gameObject.name));
         province_capital.transform.position = capital_coords;
         capital = GameObject.Find(String.Format("{0}/Capital", gameObject.name));
+        if (sea > 1)
+        {
+            population = 0; education = 0; army = 0; separatism = 0; 
+        }
     }
 
 
@@ -107,34 +111,49 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     }
     public void OnPointerClick(PointerEventData eventdata) // Executor
     {
-        if (intendant.GetMode() == intendant.CHOISE_MODE)
+        if (eventdata.button == PointerEventData.InputButton.Left)
         {
-            try
+            if (intendant.GetMode() == intendant.CHOISE_MODE)
             {
-                intendant.Alert(province_name);
-                intendant.ProtagonistState = state;
-                intendant.EnterPoliticalCoords();
-                foreach (GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+                try
                 {
-                    slider.GetComponent<SliderScript>().setState(state);
+                    intendant.Alert(province_name);
+                    intendant.ProtagonistState = state;
+                    intendant.EnterPoliticalCoords();
+                    foreach (GameObject slider in GameObject.FindGameObjectsWithTag("Slider"))
+                    {
+                        slider.GetComponent<SliderScript>().setState(state);
+                    }
+                }
+                catch (Exception)
+                {
+                    intendant.Alert("It is neutral province");
+                    intendant.EnterPoliticalCoordsCancel();
                 }
             }
-            catch (Exception)
+            else if (intendant.GetMode() == intendant.CONSTRUCION_MODE && state == intendant.ProtagonistState)
             {
-                intendant.Alert("It is neutral province");
-                intendant.EnterPoliticalCoordsCancel();
+                intendant.OpenMenu(intendant.ConstructionMenu);
+                intendant.SelectProvince(gameObject);
+            }
+            else if (intendant.GetMode() == intendant.ARMY_MODE && state == intendant.ProtagonistState)
+            {
+                // Debug.LogError(selected);
+                intendant.SelectProvince(gameObject);
+            }
+            else if (intendant.GetMode() == intendant.DIPLOMACY_MODE && state != intendant.ProtagonistState)
+            {
+                intendant.SelectState(state);
+            }
+            else if (intendant.GetMode() == intendant.SEPARATISM_MODE && state == intendant.ProtagonistState)
+            {
+                intendant.SelectProvince(gameObject);
             }
         }
-        else if (intendant.GetMode() == intendant.CONSTRUCION_MODE  && state == intendant.ProtagonistState)
+        else if (eventdata.button == PointerEventData.InputButton.Right)
         {
-            intendant.SelectProvince(gameObject);
-            intendant.OpenMenu(intendant.ConstructionMenu);
-            
-        }
-        else if (intendant.GetMode() == intendant.ARMY_MODE && state == intendant.ProtagonistState)
-        {
-            intendant.SelectProvince(gameObject);
-            intendant.OpenMenu(intendant.ArmyMenu);
+            intendant.selected_passive_province = gameObject;
+            // Debug.LogError(gameObject);
         }
 
         // Debug.Log(province_name + " " + state.GetComponent<stategen>().state_name);
@@ -211,7 +230,7 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
         province_material = meshRenderer.materials[0];
         province_material.color = new_color;
-        province_material.SetColor("_EmissionColor", new_color);
+        
         province_material.EnableKeyword("_EMISSION");
     }
 
@@ -239,7 +258,7 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
 
     public void AddConnection(int province_id) // Executor
     {
-        connections.Add(GameObject.Find("province_" + Convert.ToString(province_id)));
+        connections.Add(province_id);
     }
 
     public int GetConstructionsQuantity(){return Libraries + Factories + Farms + Fortresses;}
@@ -247,14 +266,28 @@ public class provincegen : MonoBehaviour, IPointerClickHandler, IPointerEnterHan
     // вписать сюда сепаратизм 
     public int GetCivilianTax()
     {
-        return (int)(population * intendant.ProtagonistState.GetComponent<stategen>().CivilianTax * (1 + (float)education / 100f) * (1 + climate / 100));
+        return (int)(population * intendant.ProtagonistState.GetComponent<stategen>().CivilianTax * (1 + (float)education / 100f) * (climate / 100) * (1 - (float)separatism / 100f));
     }
     
     public int GetProductionTax()
     {
-        return (int)(productions * intendant.ProtagonistState.GetComponent<stategen>().ProductionTax * (1 + (float)education / 100f) * (1 + (float)natural_resources / 100f));
+        return (int)(productions * intendant.ProtagonistState.GetComponent<stategen>().ProductionTax * (1 + (float)education / 100f) * ((float)natural_resources / 100f) * (1 - (float) separatism / 100f));
     }
 
+    public int GetArmyOutcome()
+    {
+        return army;
+    }
+
+    public int GetId()
+    {
+        return Convert.ToInt32(gameObject.name.Split('_')[1]);
+    }
+
+    public static GameObject GetProvinceById(int id)
+    {
+        return GameObject.Find(String.Format("province_{0}", id));
+    }
     Vector3 BottomDot(Vector3 original_dot) // helper
     {
         return new Vector3(original_dot.x, original_dot.y - y_size, original_dot.z);

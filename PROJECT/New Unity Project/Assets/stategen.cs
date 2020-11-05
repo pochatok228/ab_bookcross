@@ -38,7 +38,13 @@ public class stategen : MonoBehaviour
     private intendant intendant;
     public string state_description;
 
-    public int Balance = 1000;
+    public bool selected;
+
+    public List<GameObject> Allies;
+    public List<GameObject> Enemyes;
+
+    public int Balance = 200;
+    public int proficite;
     private int totalIncomePopulation;
     private int totalIncomeProduction;
     private int totalOutcomeArmy;
@@ -53,6 +59,7 @@ public class stategen : MonoBehaviour
 
     public int population;
     public int productions;
+    public int technology;
 
     public GameObject capital_province;
     // public string flag_file_name;
@@ -111,6 +118,15 @@ public class stategen : MonoBehaviour
         int army_outcome = GetArmyOutcome();
         float ArmyOutcomePercentage = (float)army_outcome / (float)income;
         intendant.armyslider.value = ArmyOutcomePercentage;
+        proficite = (int) (income - army_outcome - (income * ForeignTrade) - (income * Investments) - (income * Researches));
+        if (proficite >= 0)
+        {
+            intendant.Alert(String.Format("Your step proficite is {0}", proficite));
+        }
+        else
+        {
+            intendant.Alert(String.Format("Your step deficite is {0}", proficite * -1));
+        }
     }
     public int GetCivilianTax()
     {
@@ -138,7 +154,7 @@ public class stategen : MonoBehaviour
         int army_outcome = 0;
         foreach (GameObject province in list_of_provinces)
         {
-            army_outcome += province.GetComponent<provincegen>().GetProductionTax();
+            army_outcome += province.GetComponent<provincegen>().GetArmyOutcome();
         }
         totalOutcomeArmy = army_outcome;
         return army_outcome;
@@ -159,12 +175,100 @@ public class stategen : MonoBehaviour
     public void CalculateCharacteristics()
     {
         population = 0; productions = 0;
+        technology = 0;
         foreach (GameObject province in list_of_provinces)
         {
             provincegen current_provincegen = province.GetComponent<provincegen>();
             population += current_provincegen.population;
             productions += current_provincegen.productions;
+            technology += current_provincegen.education;
         }
     }
+
+    public int GetCurrentTechLevel()
+    {
+
+        foreach (GameObject province in list_of_provinces)
+        {
+            provincegen current_provincegen = province.GetComponent<provincegen>();
+            technology += current_provincegen.education;
+        }
+        
+        technology = (int) ((float) technology / (float) list_of_provinces.Count);
+        // Debug.Log(string.Format("GetCurrentTechLeve;() state{0}, redult {1}", GetId(), technology));
+        return technology;
+    }
     
+
+    public void ChangeSelection()
+    {
+        selected = !selected;
+        foreach (GameObject province in list_of_provinces)
+        {
+            province.GetComponent<provincegen>().selected = selected;
+        }
+    }
+
+    public static float GetDiplomacyDistance(GameObject state1, GameObject state2)
+    {
+        float distance;
+
+        Vector2 coords1 = state1.GetComponent<stategen>().diplomacy_coords;
+        Vector2 coords2 = state2.GetComponent<stategen>().diplomacy_coords;
+        distance = (float) Math.Pow(Math.Pow(coords1.x - coords2.x, 2) + Math.Pow(coords1.y - coords2.y, 2), 0.5);
+        return distance;
+    }
+
+    public static void ImprovePoliticalRelations(GameObject state1, GameObject state2)
+    {
+        stategen gen1 = state1.GetComponent<stategen>(); stategen gen2 = state2.GetComponent<stategen>();
+        Vector2 coords1 = gen1.diplomacy_coords; Vector2 coords2 = gen2.diplomacy_coords;
+        Vector2 delta = (coords2 - coords1) * 0.25f;
+        gen1.diplomacy_coords = coords1 + delta;
+        gen2.diplomacy_coords = coords2 - delta;
+    }
+
+    public static void WorsenPoliticalRelations(GameObject state1, GameObject state2)
+    {
+        stategen gen1 = state1.GetComponent<stategen>(); stategen gen2 = state2.GetComponent<stategen>();
+        Vector2 coords1 = gen1.diplomacy_coords; Vector2 coords2 = gen2.diplomacy_coords;
+        Vector2 delta = (coords2 - coords1) * 0.25f;
+        gen1.diplomacy_coords = coords1 - delta;
+        gen2.diplomacy_coords = coords2 + delta;
+    }
+
+    public int GetId()
+    {
+        return Convert.ToInt32(gameObject.name.Split('_')[1]);
+    }
+
+    public int GetPopulation()
+    {
+        int population = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            population += province.GetComponent<provincegen>().population;
+        }
+        return population;
+    }
+    public int GetProduction()
+    {
+        int population = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            population += province.GetComponent<provincegen>().productions;
+        }
+        return population;
+    }
+    public int GetEducation()
+    {
+        int population = 0;
+        foreach (GameObject province in list_of_provinces)
+        {
+            population += province.GetComponent<provincegen>().education;
+        }
+        return population;
+    }
+
+
 }

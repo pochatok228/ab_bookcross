@@ -29,6 +29,7 @@ public class ConstructionManager : MonoBehaviour
             intendant.selected_province.GetComponent<provincegen>().Farms++;
             UpdateMenuText(); intendant.UpdateMode();
             intendant.selected_province.GetComponent<provincegen>().selected = false;
+            intendant.selected_province.GetComponent<provincegen>().population += 10;
             intendant.selected_province = null;
             ConstructionMenu.SetActive(false);
             intendant.SpendActionPoints(2);
@@ -44,6 +45,7 @@ public class ConstructionManager : MonoBehaviour
         {
 
             intendant.selected_province.GetComponent<provincegen>().Factories++;
+            intendant.selected_province.GetComponent<provincegen>().productions += 10;
             UpdateMenuText(); intendant.UpdateMode();
             intendant.selected_province.GetComponent<provincegen>().selected = false;
             intendant.selected_province = null;
@@ -60,6 +62,7 @@ public class ConstructionManager : MonoBehaviour
             intendant.selected_province.GetComponent<provincegen>().Libraries++;
             UpdateMenuText(); intendant.UpdateMode();
             intendant.selected_province.GetComponent<provincegen>().selected = false;
+            intendant.selected_province.GetComponent<provincegen>().education++;
             intendant.selected_province = null;
             ConstructionMenu.SetActive(false);
         }
@@ -73,6 +76,7 @@ public class ConstructionManager : MonoBehaviour
             intendant.selected_province.GetComponent<provincegen>().Fortresses++;
             UpdateMenuText(); intendant.UpdateMode();
             intendant.selected_province.GetComponent<provincegen>().selected = false;
+            intendant.selected_province.GetComponent<provincegen>().defensive_ability += 10;
             intendant.selected_province = null;
             ConstructionMenu.SetActive(false);
         }

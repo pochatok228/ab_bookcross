@@ -32,8 +32,20 @@ public class GameModesManager : MonoBehaviour
             {
                 intendant.selected_province.GetComponent<provincegen>().selected = false;
                 intendant.selected_province = null;
+                Debug.Log("opened");
+                intendant.selected_state.GetComponent<stategen>().ChangeSelection();
+                intendant.selected_state = null;
+                Debug.Log("finished");
             }
             catch (Exception) { }
+            try
+            {
+                intendant.selected_state.GetComponent<stategen>().ChangeSelection();
+                intendant.selected_state = null;
+            }
+            catch (Exception)
+            { }
+
         }
     }
 
@@ -43,20 +55,7 @@ public class GameModesManager : MonoBehaviour
         
         intendant.SetMode(intendant.ECONOMICAL_MODE);
         intendant.OpenMenu(intendant.EconomicMenu);
-        foreach (GameObject province in GameObject.FindGameObjectsWithTag("Province"))
-        {
-            provincegen prg = province.GetComponent<provincegen>();
-            if (prg.state == intendant.ProtagonistState)
-            {
-                
-                double GDP = prg.productions / prg.population;
-                prg.SetTextFieldValue(String.Format("{0:0.000}", GDP));
-            }
-            else
-            {
-                prg.SetTextFieldValue("???");
-            }
-        }
+        
     }
 
     public void SetArmyMode()
@@ -70,6 +69,37 @@ public class GameModesManager : MonoBehaviour
     {
         intendant.SetMode(intendant.CONSTRUCION_MODE);
         intendant.AlertDefault();
+        GameModeMenu.SetActive(false);
+    }
+
+    public void SetDiplomacyMode()
+    {
+        intendant.SetMode(intendant.DIPLOMACY_MODE);
+        intendant.AlertDefault();
+        GameModeMenu.SetActive(false);
+    }
+
+    public void SetSeparatismMode()
+    {
+        intendant.SetMode(intendant.SEPARATISM_MODE);
+        GameModeMenu.SetActive(false);
+        intendant.AlertDefault();
+    }
+
+    public void SetNatresMode()
+    {
+        intendant.SetMode(intendant.NATURALRESOURCES_MODE);
+        GameModeMenu.SetActive(false);
+    }
+    public void SetEducationMode()
+    {
+        intendant.SetMode(intendant.EDUCATION_MODE);
+        GameModeMenu.SetActive(false);
+    }
+
+    public void SetClimateMode()
+    {
+        intendant.SetMode(intendant.CLIMATE_MODE);
         GameModeMenu.SetActive(false);
     }
 }
